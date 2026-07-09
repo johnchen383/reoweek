@@ -1,5 +1,7 @@
 # reoweek
 
+🔗 **Live:** [reoweek.vercel.app](https://reoweek.vercel.app/)
+
 A modern **MERN** starter — **M**ongoDB, **E**xpress-style API, **R**eact, **N**ode — built with:
 
 - ⚡️ **Vite** + **React 19** + **TypeScript** frontend
