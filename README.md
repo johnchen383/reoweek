@@ -52,7 +52,6 @@ cp .env.example .env
 
 There are two ways to develop:
 
-
 **Option A — full stack (recommended):** runs the frontend *and* the serverless
 functions together, exactly like production. Requires the
 [Vercel CLI](https://vercel.com/docs/cli) (`yarn global add vercel`).
