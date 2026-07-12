@@ -9,7 +9,19 @@ A modern **MERN** starter — **M**ongoDB, **E**xpress-style API, **R**eact, **N
 - 🗄️ **MongoDB** via **Mongoose**
 - ☁️ **Vercel serverless functions** (`/api`) for the backend — one platform, one deploy
 
-The scaffold ships with a single example resource (`items`) wired end to end with full CRUD, so you have a working reference to build on.
+The app is **"Which Is Better?"** — a card-swipe game where you pick between
+pairs (edit them in `src/data/questions.json`), followed by an optional
+Typeform-style survey. Both the game choices and the survey answers are
+persisted to MongoDB via the `/api/responses` endpoints.
+
+An unlinked analytics dashboard lives at **`/admin`** — head-to-head splits,
+survey distributions, the raw response table, and a (confirmed) clear-all-data
+action. It isn't linked from anywhere, and it's gated by the
+**`ADMIN_PASSWORD`** env variable: the page prompts for the password and the
+API checks it server-side on the admin endpoints (list + delete). If
+`ADMIN_PASSWORD` is unset, those endpoints stay locked. Setting
+**`ENABLE_DELETE=false`** removes the clear-all-data option entirely (hidden
+in the UI and rejected by the API).
 
 ## Project structure
 
@@ -17,21 +29,34 @@ The scaffold ships with a single example resource (`items`) wired end to end wit
 .
 ├── api/                    # Vercel serverless functions (the "backend")
 │   ├── health.ts           # GET /api/health  — checks DB connectivity
-│   └── items/
-│       ├── index.ts        # GET/POST  /api/items
-│       └── [id].ts         # GET/PUT/DELETE  /api/items/:id
+│   └── responses/
+│       ├── index.ts        # GET/POST  /api/responses
+│       └── [id].ts         # GET/PUT   /api/responses/:id (attach survey answers)
 ├── lib/                    # Shared backend code
 │   ├── mongodb.ts          # Cached Mongoose connection (serverless-safe)
-│   └── models/Item.ts      # Mongoose model + types
+│   └── models/Response.ts  # Mongoose model + types
 ├── src/                    # React frontend
 │   ├── api/client.ts       # Typed fetch wrapper
-│   ├── components/
+│   ├── components/         # CardGame, Card, CardIcon, Interlude, Survey, Results
+│   ├── data/questions.json # ✏️ Edit the card pairs + survey questions here
 │   ├── styles/             # SCSS
-│   ├── App.tsx
-│   └── main.tsx
-├── vercel.json
+│   ├── App.tsx             # game → interlude → survey → done stage machine
+│   ├── Admin.tsx           # /admin analytics dashboard (unlinked)
+│   └── main.tsx            # routes / → App, /admin → Admin
+├── vercel.json             # SPA rewrite for /admin
 └── vite.config.ts
 ```
+
+## Editing the questions
+
+Everything the app asks lives in [`src/data/questions.json`](src/data/questions.json):
+
+- **`pairs`** — the card matchups. Each needs an `id`, `left`, and `right`
+  label. Cards get a hand-drawn icon from `src/components/CardIcon.tsx` when
+  the label has one; unknown labels fall back to a generic icon.
+- **`survey`** — the post-game questions. Supported `type`s: `text`,
+  `longtext`, `choice` (with `options`), and `scale` (with `min`/`max` and
+  optional `minLabel`/`maxLabel`). Mark any of them `"required": true`.
 
 ## Getting started
 
@@ -74,7 +99,8 @@ yarn dev             # http://localhost:5173
 
 1. Push this repo to GitHub/GitLab/Bitbucket.
 2. Import it in the [Vercel dashboard](https://vercel.com/new).
-3. Add an environment variable **`MONGODB_URI`** in the project settings.
+3. Add the environment variables **`MONGODB_URI`** and **`ADMIN_PASSWORD`**
+   (and optionally **`ENABLE_DELETE`**) in the project settings.
 4. Deploy. Vercel auto-detects Vite for the frontend and turns everything in
    `/api` into serverless functions.
 

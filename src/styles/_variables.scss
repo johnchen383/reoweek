@@ -1,18 +1,17 @@
-// Design tokens
-$color-bg: #0f1115;
-$color-surface: #191d24;
-$color-surface-hover: #21262f;
-$color-border: #2a2f3a;
-$color-text: #e6e8eb;
-$color-text-muted: #9aa2ad;
-$color-primary: #6366f1;
-$color-primary-hover: #4f46e5;
-$color-danger: #ef4444;
+// Design tokens — red / cream palette from the original "Which Is Better" page
+$color-bg: #fefaf4;
+$color-card: #ffffff;
+$color-text: #2a0a0c;
+$color-muted: #a87a7c;
+$color-border: #f3dcdc;
+$color-accent: #e22a30;
+$color-deep: #911223;
+$color-unchosen: #cdbdbd;
 
 $radius: 10px;
 $radius-sm: 6px;
 $space: 1rem;
-$max-width: 640px;
 
-$font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial,
-  sans-serif;
+$font-serif: 'Lora', Georgia, 'Times New Roman', serif;
+$font-sans: 'Proxima Nova', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+  Helvetica, Arial, sans-serif;

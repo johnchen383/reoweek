@@ -1,1 +1,1 @@
-{"root":["./src/app.tsx","./src/main.tsx","./src/types.ts","./src/vite-env.d.ts","./src/api/client.ts","./src/components/itemform.tsx"],"version":"5.9.3"}
+{"root":["./src/admin.tsx","./src/app.tsx","./src/main.tsx","./src/types.ts","./src/vite-env.d.ts","./src/api/client.ts","./src/components/card.tsx","./src/components/cardgame.tsx","./src/components/cardicon.tsx","./src/components/interlude.tsx","./src/components/results.tsx","./src/components/survey.tsx"],"version":"5.9.3"}

@@ -1,0 +1,48 @@
+{
+  "pairs": [
+    { "id": "netflix-going-out", "left": "Netflix", "right": "Going out" },
+    { "id": "happiness-purpose", "left": "Happiness", "right": "Purpose" },
+    { "id": "truth-acceptance", "left": "Truth", "right": "Acceptance" },
+    { "id": "enough-loved", "left": "Being enough", "right": "Being loved" },
+    { "id": "jesus-my-way", "left": "Jesus's way", "right": "My way" }
+  ],
+  "survey": [
+    {
+      "id": "name",
+      "type": "text",
+      "question": "First things first — what's your name?",
+      "placeholder": "Type your name…",
+      "required": true
+    },
+    {
+      "id": "hardest-choice",
+      "type": "choice",
+      "question": "Which choice was hardest to make?",
+      "options": [
+        "Netflix vs Going out",
+        "Happiness vs Purpose",
+        "Truth vs Acceptance",
+        "Being enough vs Being loved",
+        "Jesus's way vs My way"
+      ],
+      "required": true
+    },
+    {
+      "id": "honesty",
+      "type": "scale",
+      "question": "How true to yourself were your answers?",
+      "min": 1,
+      "max": 5,
+      "minLabel": "Not really",
+      "maxLabel": "Completely",
+      "required": true
+    },
+    {
+      "id": "reflection",
+      "type": "longtext",
+      "question": "Did anything surprise you about what you picked?",
+      "placeholder": "Share as much or as little as you like…",
+      "required": false
+    }
+  ]
+}

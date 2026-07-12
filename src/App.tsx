@@ -1,92 +1,109 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useRef, useState } from 'react'
 import { api } from './api/client'
-import { ItemForm } from './components/ItemForm'
-import type { Item, ItemInput } from './types'
+import { CardGame } from './components/CardGame'
+import { Interlude } from './components/Interlude'
+import { Survey } from './components/Survey'
+import { Results } from './components/Results'
+import questionsData from './data/questions.json'
+import type { Choice, Pair, SurveyAnswer, SurveyQuestion } from './types'
+
+const PAIRS = questionsData.pairs as Pair[]
+const SURVEY_QUESTIONS = questionsData.survey as SurveyQuestion[]
+
+type Stage = 'game' | 'interlude' | 'survey' | 'done'
 
 export default function App() {
-  const [items, setItems] = useState<Item[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [stage, setStage] = useState<Stage>('game')
+  const [choices, setChoices] = useState<Choice[]>([])
+  const [saveError, setSaveError] = useState<string | null>(null)
+  // The persisted response id, or null if the initial save failed and we
+  // should retry with a full create when the survey is submitted.
+  const responseId = useRef<string | null>(null)
 
-  const loadItems = useCallback(async () => {
-    setError(null)
+  function handleGameComplete(picked: Choice[]) {
+    setChoices(picked)
+    setStage('interlude')
+
+    // Persist the choices right away — the survey is optional, so they must
+    // be saved whether or not the player carries on.
+    api
+      .createResponse(picked)
+      .then((response) => {
+        responseId.current = response.id
+        setSaveError(null)
+      })
+      .catch((err) => {
+        // Not fatal — we retry with a full create on survey submit.
+        responseId.current = null
+        setSaveError(err instanceof Error ? err.message : 'Unknown error')
+      })
+  }
+
+  async function handleSurveyComplete(answers: SurveyAnswer[]) {
     try {
-      setItems(await api.listItems())
+      if (responseId.current) {
+        await api.submitSurvey(responseId.current, answers)
+      } else {
+        await api.createResponse(choices, answers)
+      }
+      setSaveError(null)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load items')
-    } finally {
-      setLoading(false)
+      setSaveError(err instanceof Error ? err.message : 'Unknown error')
     }
-  }, [])
-
-  useEffect(() => {
-    loadItems()
-  }, [loadItems])
-
-  async function handleCreate(input: ItemInput) {
-    const created = await api.createItem(input)
-    setItems((prev) => [created, ...prev])
+    setStage('done')
   }
 
-  async function handleToggle(item: Item) {
-    const updated = await api.updateItem(item.id, {
-      title: item.title,
-      description: item.description,
-      completed: !item.completed,
-    })
-    setItems((prev) => prev.map((i) => (i.id === item.id ? updated : i)))
-  }
-
-  async function handleDelete(id: string) {
-    await api.deleteItem(id)
-    setItems((prev) => prev.filter((i) => i.id !== id))
+  function handleRestart() {
+    responseId.current = null
+    setChoices([])
+    setSaveError(null)
+    setStage('game')
   }
 
   return (
-    <div className="app">
-      <header className="app__header">
-        <h1>reoweek</h1>
-        <p>A MERN + Vite + TypeScript starter. Edit these items to get going.</p>
-      </header>
+    <div className={`stage stage--${stage}`}>
+      <svg className="grain" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <filter id="noise">
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency="0.9"
+            numOctaves="2"
+            stitchTiles="stitch"
+            result="noise"
+          />
+          <feColorMatrix
+            in="noise"
+            type="matrix"
+            values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.9 0"
+          />
+        </filter>
+        <rect width="100%" height="100%" filter="url(#noise)" />
+      </svg>
 
-      <ItemForm onSubmit={handleCreate} />
+      {stage === 'game' && (
+        <>
+          <header className="masthead">
+            <div className="masthead__eyebrow">Est. 2026 · A Taste Test</div>
+            <h1 className="masthead__title">
+              Which Is <span>Better</span>?
+            </h1>
+            <div className="masthead__rule" />
+            <div className="masthead__sub">Swipe a card outward to pick it</div>
+          </header>
+          <CardGame pairs={PAIRS} onComplete={handleGameComplete} />
+        </>
+      )}
 
-      {error && <p className="app__error">⚠️ {error}</p>}
+      {stage === 'interlude' && (
+        <Interlude onAccept={() => setStage('survey')} onSkip={() => setStage('done')} />
+      )}
 
-      {loading ? (
-        <p className="app__status">Loading…</p>
-      ) : items.length === 0 ? (
-        <p className="app__status">No items yet. Add your first one above.</p>
-      ) : (
-        <ul className="item-list">
-          {items.map((item) => (
-            <li
-              key={item.id}
-              className={`item${item.completed ? ' item--done' : ''}`}
-            >
-              <label className="item__main">
-                <input
-                  type="checkbox"
-                  checked={item.completed}
-                  onChange={() => handleToggle(item)}
-                />
-                <span className="item__text">
-                  <span className="item__title">{item.title}</span>
-                  {item.description && (
-                    <span className="item__description">{item.description}</span>
-                  )}
-                </span>
-              </label>
-              <button
-                className="item__delete"
-                onClick={() => handleDelete(item.id)}
-                aria-label="Delete item"
-              >
-                ✕
-              </button>
-            </li>
-          ))}
-        </ul>
+      {stage === 'survey' && (
+        <Survey questions={SURVEY_QUESTIONS} onComplete={handleSurveyComplete} />
+      )}
+
+      {stage === 'done' && (
+        <Results choices={choices} saveError={saveError} onRestart={handleRestart} />
       )}
     </div>
   )

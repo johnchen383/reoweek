@@ -1,11 +1,20 @@
-import type { Item, ItemInput } from '../types'
+import type { AppConfig, Choice, GameResponse, SurveyAnswer } from '../types'
 
 const BASE = '/api'
 
+export class ApiError extends Error {
+  status: number
+
+  constructor(message: string, status: number) {
+    super(message)
+    this.status = status
+  }
+}
+
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${BASE}${path}`, {
-    headers: { 'Content-Type': 'application/json' },
     ...options,
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
   })
 
   if (!res.ok) {
@@ -16,7 +25,7 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
     } catch {
       // response had no JSON body
     }
-    throw new Error(message)
+    throw new ApiError(message, res.status)
   }
 
   // 204 No Content
@@ -24,13 +33,29 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   return res.json() as Promise<T>
 }
 
+function adminHeaders(password: string) {
+  return { 'x-admin-password': password }
+}
+
 export const api = {
-  listItems: () => request<Item[]>('/items'),
-  getItem: (id: string) => request<Item>(`/items/${id}`),
-  createItem: (input: ItemInput) =>
-    request<Item>('/items', { method: 'POST', body: JSON.stringify(input) }),
-  updateItem: (id: string, input: ItemInput) =>
-    request<Item>(`/items/${id}`, { method: 'PUT', body: JSON.stringify(input) }),
-  deleteItem: (id: string) =>
-    request<void>(`/items/${id}`, { method: 'DELETE' }),
+  /** Persist the game choices as soon as the cards are done. */
+  createResponse: (choices: Choice[], survey: SurveyAnswer[] = []) =>
+    request<GameResponse>('/responses', {
+      method: 'POST',
+      body: JSON.stringify({ choices, survey }),
+    }),
+  /** Attach the survey answers to an existing response. */
+  submitSurvey: (id: string, survey: SurveyAnswer[]) =>
+    request<GameResponse>(`/responses/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify({ survey }),
+    }),
+
+  getConfig: () => request<AppConfig>('/config'),
+
+  // ---- Admin (password-protected) ----
+  listResponses: (password: string) =>
+    request<GameResponse[]>('/responses', { headers: adminHeaders(password) }),
+  deleteAllResponses: (password: string) =>
+    request<void>('/responses', { method: 'DELETE', headers: adminHeaders(password) }),
 }
