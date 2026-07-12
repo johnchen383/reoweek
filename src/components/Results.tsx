@@ -1,3 +1,5 @@
+import { useEffect } from 'react'
+import { burstConfetti } from '../utils/confetti'
 import type { Choice } from '../types'
 
 interface ResultsProps {
@@ -30,6 +32,8 @@ function DoneBadge() {
 }
 
 export function Results({ choices, saveError, onRestart }: ResultsProps) {
+  useEffect(() => burstConfetti(), [])
+
   return (
     <div className="done">
       <div className="done__badge">

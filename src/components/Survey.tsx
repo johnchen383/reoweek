@@ -56,6 +56,8 @@ export function Survey({ questions, onComplete }: SurveyProps) {
 
   useEffect(() => {
     inputRef.current?.focus()
+    // Keep the field visible when the on-screen keyboard is open.
+    inputRef.current?.scrollIntoView({ block: 'center', behavior: 'smooth' })
     return () => window.clearTimeout(advanceTimer.current)
   }, [index])
 

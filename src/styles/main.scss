@@ -56,9 +56,20 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  // x only — vertical must stay scrollable so the browser can bring a
+  // focused input above the on-screen keyboard.
+  overflow-x: hidden;
   position: relative;
   padding: 1.5rem;
+}
+
+// On phones, anchor the survey near the top so the question and input sit
+// above the keyboard instead of centered behind it.
+@media (max-width: 640px) {
+  .stage--survey {
+    justify-content: flex-start;
+    padding-top: 5rem;
+  }
 }
 
 .grain {
@@ -146,6 +157,36 @@ body {
   }
 }
 
+@keyframes nudge-left {
+  0%,
+  100% {
+    transform: none;
+  }
+
+  30% {
+    transform: translateX(-12px) rotate(-2deg);
+  }
+
+  60% {
+    transform: translateX(5px) rotate(0.5deg);
+  }
+}
+
+@keyframes nudge-right {
+  0%,
+  100% {
+    transform: none;
+  }
+
+  30% {
+    transform: translateX(12px) rotate(2deg);
+  }
+
+  60% {
+    transform: translateX(-5px) rotate(-0.5deg);
+  }
+}
+
 @keyframes vs-pop {
   0% {
     opacity: 0;
@@ -159,6 +200,60 @@ body {
   100% {
     opacity: 1;
     transform: scale(1);
+  }
+}
+
+// The rest of the deck peeking out behind the current card.
+.stack {
+  position: relative;
+  isolation: isolate;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 24px;
+    background: #fff;
+    border: 1px solid $color-border;
+    box-shadow: 0 8px 18px rgba($color-text, 0.08);
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  &--one::before {
+    opacity: 1;
+  }
+
+  &--two::after {
+    opacity: 1;
+  }
+
+  &--left::before {
+    transform: translateY(8px) scale(0.965) rotate(-2.5deg);
+  }
+
+  &--left::after {
+    transform: translateY(15px) scale(0.93) rotate(-5deg);
+  }
+
+  &--right::before {
+    transform: translateY(8px) scale(0.965) rotate(2.5deg);
+  }
+
+  &--right::after {
+    transform: translateY(15px) scale(0.93) rotate(5deg);
+  }
+}
+
+.arena--nudge {
+  .card--left {
+    animation: nudge-left 0.8s ease 2;
+  }
+
+  .card--right {
+    animation: nudge-right 0.8s ease 0.1s 2;
   }
 }
 
@@ -296,14 +391,32 @@ body {
   text-transform: uppercase;
 }
 
+// Progress as a row of little card-shaped pips.
 .progress {
-  margin-top: 8px;
-  color: $color-accent;
-  font-size: 12px;
-  font-weight: 700;
-  font-family: $font-serif;
-  letter-spacing: 0.1em;
+  margin-top: 12px;
+  display: flex;
+  gap: 7px;
 }
+
+.pip {
+  width: 11px;
+  height: 15px;
+  border-radius: 3px;
+  border: 1.5px solid $color-unchosen;
+  background: #fff;
+  transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+
+  &--done {
+    background: $color-accent;
+    border-color: $color-text;
+  }
+
+  &--current {
+    border-color: $color-text;
+    transform: translateY(-2px) scale(1.12);
+  }
+}
+
 
 // ---- Shared buttons ----
 
@@ -819,6 +932,95 @@ body {
     font-weight: 500;
     text-decoration: line-through;
     text-decoration-color: $color-unchosen;
+  }
+}
+
+// ---- Promotional banner (/banner) ----
+
+.banner {
+  gap: 0;
+
+  &__minis {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 26px;
+
+    .vs {
+      width: 28px;
+      height: 28px;
+      font-size: 9px;
+    }
+  }
+
+  &__mini {
+    width: 118px;
+    height: 168px;
+    border-radius: 14px;
+    padding: 4px;
+    cursor: default;
+    pointer-events: none;
+
+    .card__inner {
+      border-radius: 10px;
+      border-width: 2px;
+      padding: 8px 6px 6px;
+    }
+
+    .card__label {
+      font-size: 8.5px;
+      padding: 3px 9px;
+    }
+
+    .card__icon svg {
+      width: 62px;
+      height: 62px;
+    }
+
+    .card__number {
+      font-size: 11px;
+      padding: 0 6px;
+      border-radius: 5px;
+    }
+
+    &--left {
+      transform: rotate(-7deg) translateY(4px);
+    }
+
+    &--right {
+      transform: rotate(7deg) translateY(4px);
+    }
+  }
+
+  &__masthead {
+    margin-bottom: 2rem;
+  }
+
+  &__qr {
+    background: #fff;
+    border: 2.5px solid $color-text;
+    border-radius: 20px;
+    padding: 20px;
+    line-height: 0;
+    box-shadow: 0 14px 30px rgba($color-text, 0.14);
+  }
+
+  &__url {
+    margin-top: 18px;
+    font-family: $font-serif;
+    font-weight: 800;
+    font-size: 22px;
+    letter-spacing: 0.01em;
+    color: $color-accent;
+  }
+
+  &__hint {
+    margin-top: 8px;
+    font-size: 11px;
+    color: $color-muted;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
   }
 }
 

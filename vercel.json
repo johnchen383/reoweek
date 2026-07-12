@@ -3,5 +3,8 @@
   "buildCommand": "yarn build",
   "outputDirectory": "dist",
   "framework": "vite",
-  "rewrites": [{ "source": "/admin", "destination": "/index.html" }]
+  "rewrites": [
+    { "source": "/admin", "destination": "/index.html" },
+    { "source": "/banner", "destination": "/index.html" }
+  ]
 }
