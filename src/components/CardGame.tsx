@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Card, type CardSide } from './Card'
+import { haptics } from '../utils/haptics'
 import type { Choice, Pair } from '../types'
 
 interface CardGameProps {
@@ -32,6 +33,7 @@ export function CardGame({ pairs, onComplete }: CardGameProps) {
   function choose(side: CardSide) {
     if (picked || !pair) return
     setPicked(side)
+    haptics.pick()
 
     const chosen = side === 'left' ? pair.left : pair.right
     const other = side === 'left' ? pair.right : pair.left
@@ -39,6 +41,7 @@ export function CardGame({ pairs, onComplete }: CardGameProps) {
 
     timerRef.current = window.setTimeout(() => {
       if (index + 1 >= pairs.length) {
+        haptics.finish()
         onComplete(choicesRef.current)
       } else {
         setPicked(null)
@@ -60,7 +63,9 @@ export function CardGame({ pairs, onComplete }: CardGameProps) {
           state={picked === 'left' ? 'picked' : picked === 'right' ? 'faded' : 'idle'}
           onChoose={() => choose('left')}
         />
-        <div className="vs">VS</div>
+        <div className="vs" key={`${pair.id}-vs`}>
+          VS
+        </div>
         <Card
           key={`${pair.id}-right`}
           label={pair.right}

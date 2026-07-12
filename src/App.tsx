@@ -4,11 +4,8 @@ import { CardGame } from './components/CardGame'
 import { Interlude } from './components/Interlude'
 import { Survey } from './components/Survey'
 import { Results } from './components/Results'
-import questionsData from './data/questions.json'
-import type { Choice, Pair, SurveyAnswer, SurveyQuestion } from './types'
-
-const PAIRS = questionsData.pairs as Pair[]
-const SURVEY_QUESTIONS = questionsData.survey as SurveyQuestion[]
+import { PAIRS, SURVEY_QUESTIONS } from './data/questions'
+import type { Choice, SurveyAnswer } from './types'
 
 type Stage = 'game' | 'interlude' | 'survey' | 'done'
 

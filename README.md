@@ -54,9 +54,12 @@ Everything the app asks lives in [`src/data/questions.json`](src/data/questions.
 - **`pairs`** — the card matchups. Each needs an `id`, `left`, and `right`
   label. Cards get a hand-drawn icon from `src/components/CardIcon.tsx` when
   the label has one; unknown labels fall back to a generic icon.
-- **`survey`** — the post-game questions. Supported `type`s: `text`,
-  `longtext`, `choice` (with `options`), and `scale` (with `min`/`max` and
-  optional `minLabel`/`maxLabel`). Mark any of them `"required": true`.
+- **`survey`** — the post-game questions. Supported `type`s: `text`, `email`,
+  `phone` (validated, with matching mobile keyboards), `longtext`, `choice`
+  (with `options`), and `scale` (with `min`/`max` and optional
+  `minLabel`/`maxLabel`). Mark any of them `"required": true`.
+  A choice question can use `"optionsFrom": "pairs"` instead of `options` to
+  offer one option per matchup — it stays in sync when you edit the pairs.
 
 ## Getting started
 

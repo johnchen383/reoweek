@@ -15,16 +15,24 @@
       "required": true
     },
     {
+      "id": "email",
+      "type": "email",
+      "question": "What's the best email to reach you on?",
+      "placeholder": "you@example.com",
+      "required": true
+    },
+    {
+      "id": "mobile",
+      "type": "phone",
+      "question": "And your mobile number?",
+      "placeholder": "xxx xxx xxxx",
+      "required": true
+    },
+    {
       "id": "hardest-choice",
       "type": "choice",
       "question": "Which choice was hardest to make?",
-      "options": [
-        "Netflix vs Going out",
-        "Happiness vs Purpose",
-        "Truth vs Acceptance",
-        "Being enough vs Being loved",
-        "Jesus's way vs My way"
-      ],
+      "optionsFrom": "pairs",
       "required": true
     },
     {

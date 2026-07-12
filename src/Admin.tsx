@@ -1,11 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { FormEvent } from 'react'
 import { api, ApiError } from './api/client'
-import questionsData from './data/questions.json'
-import type { GameResponse, Pair, SurveyQuestion } from './types'
-
-const PAIRS = questionsData.pairs as Pair[]
-const SURVEY_QUESTIONS = questionsData.survey as SurveyQuestion[]
+import { PAIRS, SURVEY_QUESTIONS } from './data/questions'
+import { downloadCsv, responsesToCsv } from './utils/csv'
+import type { GameResponse, Pair } from './types'
 
 // Two-slot categorical palette for the head-to-head split bars, validated
 // against the cream surface (#FEFAF4): CVD ΔE 19.5, contrast >= 3:1.
@@ -166,14 +164,30 @@ export default function Admin() {
           <div className="admin__eyebrow">Admin · Which Is Better?</div>
           <h1 className="admin__title">Results</h1>
         </div>
-        <button
-          type="button"
-          className="button button--primary"
-          onClick={() => load(password)}
-          disabled={loading}
-        >
-          {loading ? 'Loading…' : 'Refresh'}
-        </button>
+        <div className="admin__header-actions">
+          {responses.length > 0 && (
+            <button
+              type="button"
+              className="button button--subtle"
+              onClick={() =>
+                downloadCsv(
+                  responsesToCsv(responses, PAIRS, SURVEY_QUESTIONS),
+                  'which-is-better-results.csv',
+                )
+              }
+            >
+              Export CSV
+            </button>
+          )}
+          <button
+            type="button"
+            className="button button--primary"
+            onClick={() => load(password)}
+            disabled={loading}
+          >
+            {loading ? 'Loading…' : 'Refresh'}
+          </button>
+        </div>
       </header>
 
       {error && (
@@ -329,7 +343,9 @@ export default function Admin() {
             )
           })}
 
-          {SURVEY_QUESTIONS.filter((q) => q.type === 'text' || q.type === 'longtext').map((q) => {
+          {SURVEY_QUESTIONS.filter((q) =>
+            ['text', 'email', 'phone', 'longtext'].includes(q.type),
+          ).map((q) => {
             const values = answersFor(responses, q.id).filter(
               (a): a is string => typeof a === 'string' && a.trim() !== '',
             )

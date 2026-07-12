@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import type { RefObject } from 'react'
+import { haptics } from '../utils/haptics'
 import type { SurveyAnswer, SurveyQuestion } from '../types'
 
 interface SurveyProps {
@@ -9,6 +10,28 @@ interface SurveyProps {
 }
 
 const LETTERS = 'ABCDEFGHIJ'
+
+const EMAIL_RE = /^\S+@\S+\.\S+$/
+// 8–15 digits, optional leading +, ignoring spaces/dashes/parentheses.
+const PHONE_RE = /^\+?\d{8,15}$/
+
+const TEXT_LIKE = ['text', 'email', 'phone'] as const
+
+const INPUT_ATTRS = {
+  text: { type: 'text', inputMode: undefined, autoComplete: 'name' },
+  email: { type: 'email', inputMode: 'email', autoComplete: 'email' },
+  phone: { type: 'tel', inputMode: 'tel', autoComplete: 'tel' },
+} as const
+
+function validationError(question: SurveyQuestion, answer: string) {
+  if (question.type === 'email' && !EMAIL_RE.test(answer.trim())) {
+    return 'Hmm, that email doesn’t look right'
+  }
+  if (question.type === 'phone' && !PHONE_RE.test(answer.replace(/[\s\-().]/g, ''))) {
+    return 'Hmm, that number doesn’t look right'
+  }
+  return null
+}
 
 /**
  * A Typeform-style, one-question-at-a-time survey. Enter advances, choices
@@ -26,6 +49,10 @@ export function Survey({ questions, onComplete }: SurveyProps) {
   const question = questions[index]
   const value = answers[question.id]
   const isLast = index === questions.length - 1
+  // Single-line input attributes when this is a text-like question (text/email/phone).
+  const textAttrs = (TEXT_LIKE as readonly string[]).includes(question.type)
+    ? INPUT_ATTRS[question.type as (typeof TEXT_LIKE)[number]]
+    : null
 
   useEffect(() => {
     inputRef.current?.focus()
@@ -43,6 +70,13 @@ export function Survey({ questions, onComplete }: SurveyProps) {
     if (question.required && empty) {
       setError('Please fill this in')
       return
+    }
+    if (!empty && typeof answer === 'string') {
+      const invalid = validationError(question, answer)
+      if (invalid) {
+        setError(invalid)
+        return
+      }
     }
 
     if (!isLast) {
@@ -77,6 +111,7 @@ export function Survey({ questions, onComplete }: SurveyProps) {
   /** Select an option, show it highlighted briefly, then advance. */
   function selectAndAdvance(answer: string | number) {
     if (submitting) return
+    haptics.tick()
     setAnswer(question.id, answer)
     window.clearTimeout(advanceTimer.current)
     const updated = { ...answers, [question.id]: answer }
@@ -108,11 +143,13 @@ export function Survey({ questions, onComplete }: SurveyProps) {
           {question.required && <span className="survey__required">*</span>}
         </h2>
 
-        {question.type === 'text' && (
+        {textAttrs && (
           <input
             ref={inputRef as RefObject<HTMLInputElement>}
             className="survey__input"
-            type="text"
+            type={textAttrs.type}
+            inputMode={textAttrs.inputMode}
+            autoComplete={textAttrs.autoComplete}
             placeholder={question.placeholder ?? 'Type your answer…'}
             value={(value as string) ?? ''}
             onChange={(e) => setAnswer(question.id, e.target.value)}
@@ -192,7 +229,7 @@ export function Survey({ questions, onComplete }: SurveyProps) {
           >
             {submitting ? 'Saving…' : isLast ? 'Finish' : 'OK'}
           </button>
-          {(question.type === 'text' || question.type === 'longtext') && !submitting && (
+          {(textAttrs || question.type === 'longtext') && !submitting && (
             <span className="survey__enter-hint">
               press <strong>Enter ↵</strong>
             </span>

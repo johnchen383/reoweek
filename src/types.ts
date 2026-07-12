@@ -4,7 +4,13 @@ export interface Pair {
   right: string
 }
 
-export type SurveyQuestionType = 'text' | 'longtext' | 'choice' | 'scale'
+export type SurveyQuestionType =
+  | 'text'
+  | 'email'
+  | 'phone'
+  | 'longtext'
+  | 'choice'
+  | 'scale'
 
 export interface SurveyQuestion {
   id: string
@@ -12,6 +18,8 @@ export interface SurveyQuestion {
   question: string
   placeholder?: string
   options?: string[]
+  /** For choice questions: derive the options instead of listing them ("pairs" → one per matchup). */
+  optionsFrom?: 'pairs'
   min?: number
   max?: number
   minLabel?: string
