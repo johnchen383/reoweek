@@ -56,10 +56,12 @@ Everything the app asks lives in [`src/data/questions.json`](src/data/questions.
   the label has one; unknown labels fall back to a generic icon.
 - **`survey`** — the post-game questions. Supported `type`s: `text`, `email`,
   `phone` (validated, with matching mobile keyboards), `longtext`, `choice`
-  (with `options`), and `scale` (with `min`/`max` and optional
+  (single answer, with `options`), `multichoice` (pick any number of
+  `options`), and `scale` (with `min`/`max` and optional
   `minLabel`/`maxLabel`). Mark any of them `"required": true`.
-  A choice question can use `"optionsFrom": "pairs"` instead of `options` to
-  offer one option per matchup — it stays in sync when you edit the pairs.
+  A choice or multichoice question can use `"optionsFrom": "pairs"` instead of
+  `options` to offer one option per matchup — it stays in sync when you edit
+  the pairs.
 
 ## Getting started
 

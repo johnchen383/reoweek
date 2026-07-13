@@ -36,6 +36,19 @@
       "required": true
     },
     {
+      "id": "decision-drivers",
+      "type": "multichoice",
+      "question": "What drove your choices? Pick all that apply.",
+      "options": [
+        "Gut instinct",
+        "Past experience",
+        "What I wish were true",
+        "What others expect of me",
+        "My faith"
+      ],
+      "required": true
+    },
+    {
       "id": "honesty",
       "type": "scale",
       "question": "How true to yourself were your answers?",

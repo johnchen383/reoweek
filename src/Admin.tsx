@@ -278,10 +278,12 @@ export default function Admin() {
             </div>
           </section>
 
-          {SURVEY_QUESTIONS.filter((q) => q.type === 'choice').map((q) => {
+          {SURVEY_QUESTIONS.filter((q) => q.type === 'choice' || q.type === 'multichoice').map((q) => {
             const values = answersFor(responses, q.id)
             const counts = (q.options ?? []).map(
-              (option) => values.filter((v) => v === option).length,
+              (option) =>
+                values.filter((v) => v === option || (Array.isArray(v) && v.includes(option)))
+                  .length,
             )
             const max = Math.max(...counts, 1)
             return (
@@ -384,7 +386,11 @@ export default function Admin() {
                       <td>{r.choices.map((c) => c.chosen).join(' · ')}</td>
                       <td>
                         {r.surveyCompletedAt
-                          ? r.survey.map((a) => `${a.answer}`).join(' · ')
+                          ? r.survey
+                              .map((a) =>
+                                Array.isArray(a.answer) ? a.answer.join(', ') : `${a.answer}`,
+                              )
+                              .join(' · ')
                           : '—'}
                       </td>
                     </tr>

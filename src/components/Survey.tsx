@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import type { RefObject } from 'react'
 import { haptics } from '../utils/haptics'
-import type { SurveyAnswer, SurveyQuestion } from '../types'
+import type { AnswerValue, SurveyAnswer, SurveyQuestion } from '../types'
 
 interface SurveyProps {
   questions: SurveyQuestion[]
@@ -40,7 +40,7 @@ function validationError(question: SurveyQuestion, answer: string) {
  */
 export function Survey({ questions, onComplete }: SurveyProps) {
   const [index, setIndex] = useState(0)
-  const [answers, setAnswers] = useState<Record<string, string | number>>({})
+  const [answers, setAnswers] = useState<Record<string, AnswerValue>>({})
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null)
@@ -61,14 +61,22 @@ export function Survey({ questions, onComplete }: SurveyProps) {
     return () => window.clearTimeout(advanceTimer.current)
   }, [index])
 
-  function setAnswer(id: string, answer: string | number) {
+  function setAnswer(id: string, answer: AnswerValue) {
     setError(null)
     setAnswers((prev) => ({ ...prev, [id]: answer }))
   }
 
+  function isEmpty(answer: AnswerValue | undefined) {
+    return (
+      answer === undefined ||
+      (typeof answer === 'string' && answer.trim() === '') ||
+      (Array.isArray(answer) && answer.length === 0)
+    )
+  }
+
   async function next(currentAnswers = answers) {
     const answer = currentAnswers[question.id]
-    const empty = answer === undefined || (typeof answer === 'string' && answer.trim() === '')
+    const empty = isEmpty(answer)
     if (question.required && empty) {
       setError('Please fill this in')
       return
@@ -89,10 +97,7 @@ export function Survey({ questions, onComplete }: SurveyProps) {
 
     // Last question — build the answer list and hand it to the parent.
     const built: SurveyAnswer[] = questions
-      .filter((q) => {
-        const a = currentAnswers[q.id]
-        return a !== undefined && !(typeof a === 'string' && a.trim() === '')
-      })
+      .filter((q) => !isEmpty(currentAnswers[q.id]))
       .map((q) => ({
         questionId: q.id,
         question: q.question,
@@ -108,6 +113,17 @@ export function Survey({ questions, onComplete }: SurveyProps) {
     } finally {
       setSubmitting(false)
     }
+  }
+
+  /** Toggle one selection of a multichoice question — no auto-advance. */
+  function toggleOption(option: string) {
+    if (submitting) return
+    haptics.tick()
+    const current = Array.isArray(value) ? value : []
+    setAnswer(
+      question.id,
+      current.includes(option) ? current.filter((o) => o !== option) : [...current, option],
+    )
   }
 
   /** Select an option, show it highlighted briefly, then advance. */
@@ -191,6 +207,27 @@ export function Survey({ questions, onComplete }: SurveyProps) {
                 {option}
               </button>
             ))}
+          </div>
+        )}
+
+        {question.type === 'multichoice' && (
+          <div className="survey__options">
+            <p className="survey__multi-hint">Choose all that apply</p>
+            {question.options?.map((option, i) => {
+              const selected = Array.isArray(value) && value.includes(option)
+              return (
+                <button
+                  key={option}
+                  type="button"
+                  className={`survey__option${selected ? ' survey__option--selected' : ''}`}
+                  aria-pressed={selected}
+                  onClick={() => toggleOption(option)}
+                >
+                  <span className="survey__option-key">{selected ? '✓' : LETTERS[i]}</span>
+                  {option}
+                </button>
+              )
+            })}
           </div>
         )}
 

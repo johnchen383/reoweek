@@ -13,7 +13,7 @@ export function pairLabel(pair: Pair) {
  * never requires touching the question.
  */
 export const SURVEY_QUESTIONS = (raw.survey as SurveyQuestion[]).map((q) =>
-  q.type === 'choice' && q.optionsFrom === 'pairs'
+  (q.type === 'choice' || q.type === 'multichoice') && q.optionsFrom === 'pairs'
     ? { ...q, options: PAIRS.map(pairLabel) }
     : q,
 )

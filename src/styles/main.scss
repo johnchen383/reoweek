@@ -598,6 +598,15 @@ body {
     }
   }
 
+  &__multi-hint {
+    font-size: 11px;
+    color: $color-muted;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin: 0 0 4px;
+  }
+
   &__option-key {
     width: 22px;
     height: 22px;

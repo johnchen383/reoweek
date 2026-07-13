@@ -10,7 +10,11 @@ export type SurveyQuestionType =
   | 'phone'
   | 'longtext'
   | 'choice'
+  | 'multichoice'
   | 'scale'
+
+/** A single answer value: text/choice/scale, or the selections of a multichoice. */
+export type AnswerValue = string | number | string[]
 
 export interface SurveyQuestion {
   id: string
@@ -38,7 +42,7 @@ export interface Choice {
 export interface SurveyAnswer {
   questionId: string
   question: string
-  answer: string | number
+  answer: AnswerValue
 }
 
 /** Feature flags served by GET /api/config. */

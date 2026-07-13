@@ -23,7 +23,8 @@ export function responsesToCsv(
     ...pairs.map((p) => r.choices.find((c) => c.pairId === p.id)?.chosen ?? ''),
     ...questions.map((q) => {
       const answer = r.survey.find((a) => a.questionId === q.id)
-      return answer ? String(answer.answer) : ''
+      if (!answer) return ''
+      return Array.isArray(answer.answer) ? answer.answer.join('; ') : String(answer.answer)
     }),
     r.surveyCompletedAt ? 'yes' : 'no',
   ])
