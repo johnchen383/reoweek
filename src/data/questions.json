@@ -67,7 +67,7 @@
       "required": true
     },
     {
-      "id": "faith",
+      "id": "interested-in",
       "type": "choice",
       "question": "I'm interested in...",
       "options": [
