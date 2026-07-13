@@ -22,19 +22,6 @@
       "required": true
     },
     {
-      "id": "decision-drivers",
-      "type": "multichoice",
-      "question": "What drove your choices? Pick all that apply.",
-      "options": [
-        "Gut instinct",
-        "Past experience",
-        "What I wish were true",
-        "What others expect of me",
-        "My faith"
-      ],
-      "required": true
-    },
-    {
       "id": "honesty",
       "type": "scale",
       "question": "How hard was it to decide your preferences?",
@@ -56,7 +43,7 @@
     },
     {
       "id": "faith",
-      "type": "choice",
+      "type": "multichoice",
       "question": "Which of these best describes where you're at right now with faith?",
       "options": [
         "I'm curious to learn more about Jesus",
@@ -67,8 +54,8 @@
       "required": true
     },
     {
-      "id": "interested-in",
-      "type": "choice",
+      "id": "faith",
+      "type": "multichoice",
       "question": "I'm interested in...",
       "options": [
         "Going in the $200 prize pool draw!",
