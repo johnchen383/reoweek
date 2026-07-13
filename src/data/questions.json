@@ -1,6 +1,6 @@
 {
   "pairs": [
-    { "id": "netflix-going-out", "left": "Netflix", "right": "Going out" },
+    { "id": "movie-going-out", "left": "Movie Night", "right": "Going out" },
     { "id": "happiness-purpose", "left": "Happiness", "right": "Purpose" },
     { "id": "truth-acceptance", "left": "Truth", "right": "Acceptance" },
     { "id": "enough-loved", "left": "Being enough", "right": "Being loved" },
@@ -10,29 +10,15 @@
     {
       "id": "name",
       "type": "text",
-      "question": "First things first — what's your name?",
-      "placeholder": "Type your name…",
+      "question": "What's your name?",
+      "placeholder": "e.g. Jane Doe",
       "required": true
     },
     {
-      "id": "email",
-      "type": "email",
-      "question": "What's the best email to reach you on?",
-      "placeholder": "you@example.com",
-      "required": true
-    },
-    {
-      "id": "mobile",
-      "type": "phone",
-      "question": "And your mobile number?",
-      "placeholder": "xxx xxx xxxx",
-      "required": true
-    },
-    {
-      "id": "hardest-choice",
+      "id": "student",
       "type": "choice",
-      "question": "Which choice was hardest to make?",
-      "optionsFrom": "pairs",
+      "question": "Are you a student?",
+      "options": ["Yes", "No"],
       "required": true
     },
     {
@@ -51,19 +37,54 @@
     {
       "id": "honesty",
       "type": "scale",
-      "question": "How true to yourself were your answers?",
+      "question": "How hard was it to decide your preferences?",
       "min": 1,
-      "max": 5,
-      "minLabel": "Not really",
-      "maxLabel": "Completely",
+      "max": 6,
+      "minLabel": "Pretty easy",
+      "maxLabel": "Super hard",
       "required": true
     },
     {
-      "id": "reflection",
-      "type": "longtext",
-      "question": "Did anything surprise you about what you picked?",
-      "placeholder": "Share as much or as little as you like…",
-      "required": false
+      "id": "rating-values",
+      "type": "scale",
+      "question": "How much did this help you notice what you actually believe or value?",
+      "min": 1,
+      "max": 6,
+      "minLabel": "Not at all",
+      "maxLabel": "A lot",
+      "required": true
+    },
+    {
+      "id": "faith",
+      "type": "choice",
+      "question": "Which of these best describes where you're at right now with faith?",
+      "options": [
+        "I'm curious to learn more about Jesus",
+        "I'm looking for a church to call home",
+        "I'm Christian and I have a home church",
+        "I'm currently closed off to faith things"
+      ],
+      "required": true
+    },
+    {
+      "id": "faith",
+      "type": "choice",
+      "question": "I'm interested in...",
+      "options": [
+        "Going in the $200 prize pool draw!",
+        "Making new friends + social events",
+        "Learning more about Jesus",
+        "Coming along to Unichurch",
+        "I'm not interested in anything at the moment"
+      ],
+      "required": true
+    },
+    {
+      "id": "contact",
+      "type": "text",
+      "question": "Enter your Instagram or mobile to enter the draw!",
+      "placeholder": "@janedoe123",
+      "required": true
     }
   ]
 }
