@@ -1,6 +1,6 @@
 interface InterludeProps {
-  onAccept: () => void
-  onSkip: () => void
+  onAccept: () => void;
+  onSkip: () => void;
 }
 
 /**
@@ -11,19 +11,22 @@ export function Interlude({ onAccept, onSkip }: InterludeProps) {
   return (
     <div className="interlude">
       <div className="interlude__emoji">💬</div>
-      <div className="interlude__eyebrow">One more thing</div>
+      <div className="interlude__eyebrow">Thanks for playing!</div>
       <h2 className="interlude__title">
-        Want to <span>tell us more</span>?
+        We'd love to hear <span>your feedback</span>
       </h2>
-      <p className="interlude__sub">A few quick questions · totally optional</p>
+      <p className="interlude__sub">1 min survey | $200 prize pool</p>
       <div className="interlude__actions">
-        <button type="button" className="button button--primary" onClick={onAccept}>
-          Sure, let's go
+        <button
+          type="button"
+          className="button button--primary"
+          onClick={onAccept}>
+          Let's go!
         </button>
         <button type="button" className="interlude__skip" onClick={onSkip}>
-          Skip for now
+          No thanks
         </button>
       </div>
     </div>
-  )
+  );
 }
