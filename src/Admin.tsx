@@ -280,16 +280,31 @@ export default function Admin() {
 
           {SURVEY_QUESTIONS.filter((q) => q.type === 'choice' || q.type === 'multichoice').map((q) => {
             const values = answersFor(responses, q.id)
-            const counts = (q.options ?? []).map(
+            const options = q.options ?? []
+            const counts = options.map(
               (option) =>
                 values.filter((v) => v === option || (Array.isArray(v) && v.includes(option)))
                   .length,
             )
             const max = Math.max(...counts, 1)
+            // Answers recorded before a question's options were edited match
+            // nothing — surface them instead of leaving the totals looking wrong.
+            const matched = values.filter((v) =>
+              options.some((o) => v === o || (Array.isArray(v) && v.includes(o))),
+            ).length
+            const stale = values.length - matched
+            const selections = counts.reduce((sum, n) => sum + n, 0)
+            const caption = [
+              `${matched} ${matched === 1 ? 'answer' : 'answers'}`,
+              q.type === 'multichoice' ? `${selections} selections` : null,
+              stale > 0 ? `${stale} from an older version of this question` : null,
+            ]
+              .filter(Boolean)
+              .join(' · ')
             return (
               <section className="admin__section" key={q.id}>
                 <h2 className="admin__section-title">{q.question}</h2>
-                <p className="admin__section-sub">{values.length} answers</p>
+                <p className="admin__section-sub">{caption}</p>
                 <div className="dist">
                   {(q.options ?? []).map((option, i) => (
                     <div className="dist__row" key={option}>
