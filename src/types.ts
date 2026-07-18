@@ -2,24 +2,26 @@ export interface Pair {
   id: string;
   left: string;
   right: string;
+  title: string;
 }
 
 export type SurveyQuestionType =
-  | 'text'
-  | 'email'
-  | 'phone'
-  | 'longtext'
-  | 'choice'
-  | 'multichoice'
-  | 'scale'
+  | "text"
+  | "email"
+  | "phone"
+  | "longtext"
+  | "choice"
+  | "multichoice"
+  | "scale";
 
 /** A single answer value: text/choice/scale, or the selections of a multichoice. */
-export type AnswerValue = string | number | string[]
+export type AnswerValue = string | number | string[];
 
 export interface SurveyQuestion {
   id: string;
   type: SurveyQuestionType;
   question: string;
+  subLabel?: string;
   placeholder?: string;
   options?: string[];
   /** For choice questions: derive the options instead of listing them ("pairs" → one per matchup). */
@@ -40,9 +42,9 @@ export interface Choice {
 
 /** One answered survey question. */
 export interface SurveyAnswer {
-  questionId: string
-  question: string
-  answer: AnswerValue
+  questionId: string;
+  question: string;
+  answer: AnswerValue;
 }
 
 /** Feature flags served by GET /api/config. */

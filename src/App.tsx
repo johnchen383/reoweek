@@ -87,8 +87,8 @@ export default function App() {
             <h1 className="masthead__title">
               Which Is <span>Better</span>?
             </h1>
-            <div className="masthead__rule" />
-            <div className="masthead__sub">Swipe a card outward to pick it</div>
+            {/* <div className="masthead__rule" /> */}
+            {/* <div className="masthead__sub">Swipe a card outward to pick it</div> */}
           </header>
           <CardGame pairs={PAIRS} onComplete={handleGameComplete} />
         </>

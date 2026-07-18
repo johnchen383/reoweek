@@ -1,10 +1,41 @@
 {
   "pairs": [
-    { "id": "movie-going-out", "left": "Movie Night", "right": "Going out" },
-    { "id": "happiness-purpose", "left": "Happiness", "right": "Purpose" },
-    { "id": "truth-acceptance", "left": "Truth", "right": "Acceptance" },
-    { "id": "enough-loved", "left": "Being enough", "right": "Being loved" },
-    { "id": "jesus-my-way", "left": "Jesus's way", "right": "My way" }
+    {
+      "id": "drink",
+      "left": "Bubble tea",
+      "right": "Matcha",
+      "title": "I'd prefer..."
+    },
+    {
+      "id": "movie-going-out",
+      "left": "Movie Night",
+      "right": "Going out",
+      "title": "I'd prefer..."
+    },
+    {
+      "id": "happiness-purpose",
+      "left": "Happiness",
+      "right": "Purpose",
+      "title": "I live for my..."
+    },
+    {
+      "id": "truth-acceptance",
+      "left": "Truth",
+      "right": "Acceptance",
+      "title": "I care more about..."
+    },
+    {
+      "id": "enough-loved",
+      "left": "Being enough",
+      "right": "Being loved",
+      "title": "I care more about..."
+    },
+    {
+      "id": "jesus-my-way",
+      "left": "Jesus's way",
+      "right": "My way",
+      "title": "I live my life..."
+    }
   ],
   "survey": [
     {
@@ -34,7 +65,7 @@
     {
       "id": "rating-values",
       "type": "scale",
-      "question": "How much did this help you notice what you actually believe or value?",
+      "question": "How much did this make you reflect on your values?",
       "min": 1,
       "max": 6,
       "minLabel": "Not at all",
@@ -43,7 +74,7 @@
     },
     {
       "id": "faith",
-      "type": "multichoice",
+      "type": "choice",
       "question": "Which of these best describes where you're at right now with faith?",
       "options": [
         "I'm curious to learn more about Jesus",
@@ -69,7 +100,8 @@
     {
       "id": "contact",
       "type": "text",
-      "question": "Enter your Instagram or mobile to enter the draw!",
+      "question": "Let us know your Instagram or mobile number.",
+      "subLabel": "We'll get in touch if you win the draw or with more details!",
       "placeholder": "@janedoe123",
       "required": true
     }

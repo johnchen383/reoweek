@@ -92,10 +92,9 @@ body {
 
 .masthead {
   text-align: center;
-  margin-bottom: 2.5rem;
 
   &__eyebrow {
-    font-size: 11px;
+    font-size: 16px;
     font-weight: 700;
     letter-spacing: 0.25em;
     text-transform: uppercase;
@@ -104,15 +103,17 @@ body {
   }
 
   &__title {
-    font-size: 58px;
+    font-size: 68px;
     font-weight: 800;
-    font-family: $font-serif;
+    font-family: $font-poppins;
     letter-spacing: -0.02em;
     margin: 0;
     color: $color-text;
+    text-transform: uppercase;
 
     span {
       color: $color-accent;
+      font-weight: bold;
       font-style: italic;
     }
   }
@@ -123,11 +124,12 @@ body {
   }
 
   &__sub {
-    font-size: 11px;
+    font-size: 16px;
     color: $color-muted;
     font-weight: 700;
     letter-spacing: 0.15em;
     text-transform: uppercase;
+    margin: 64px 0 1.5rem;
   }
 }
 
@@ -751,7 +753,7 @@ body {
   }
 
   &__eyebrow {
-    font-size: 11px;
+    font-size: 16px;
     font-weight: 700;
     letter-spacing: 0.25em;
     text-transform: uppercase;
@@ -760,21 +762,23 @@ body {
   }
 
   &__title {
-    font-size: 38px;
-    font-weight: 800;
-    font-family: $font-serif;
+    font-size: 48px;
+    font-weight: 600;
+    font-family: $font-poppins;
     letter-spacing: -0.01em;
     margin: 0 0 8px;
     color: $color-text;
+    line-height: 1.4;
 
     span {
       color: $color-accent;
+      font-weight: bold;
       font-style: italic;
     }
   }
 
   &__sub {
-    font-size: 11px;
+    font-size: 16px;
     color: $color-muted;
     margin: 0 0 30px;
     font-weight: 700;
@@ -787,13 +791,17 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 14px;
+
+    & .button {
+      font-size: 16px;
+    }
   }
 
   &__skip {
     background: none;
     border: none;
     color: $color-muted;
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 700;
     letter-spacing: 0.15em;
     text-transform: uppercase;
@@ -855,13 +863,14 @@ body {
   &__title {
     font-size: 38px;
     font-weight: 800;
-    font-family: $font-serif;
+    font-family: $font-poppins;
     letter-spacing: -0.02em;
     margin: 0;
     color: $color-text;
 
     span {
       color: $color-accent;
+      font-weight: bold;
       font-style: italic;
     }
   }
@@ -1129,7 +1138,7 @@ body {
   }
 
   &__title {
-    font-family: $font-serif;
+    font-family: $font-poppins;
     font-weight: 800;
     font-size: 26px;
     letter-spacing: -0.01em;
@@ -1195,7 +1204,7 @@ body {
   &__title {
     font-size: 40px;
     font-weight: 800;
-    font-family: $font-serif;
+    font-family: $font-poppins;
     letter-spacing: -0.02em;
     margin: 0;
   }

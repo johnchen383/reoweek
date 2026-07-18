@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from 'react'
-import type { RefObject } from 'react'
-import { haptics } from '../utils/haptics'
-import type { AnswerValue, SurveyAnswer, SurveyQuestion } from '../types'
+import { useEffect, useRef, useState } from "react";
+import type { RefObject } from "react";
+import { haptics } from "../utils/haptics";
+import type { AnswerValue, SurveyAnswer, SurveyQuestion } from "../types";
 
 interface SurveyProps {
   questions: SurveyQuestion[];
@@ -42,12 +42,12 @@ function validationError(question: SurveyQuestion, answer: string) {
  * progress.
  */
 export function Survey({ questions, onComplete }: SurveyProps) {
-  const [index, setIndex] = useState(0)
-  const [answers, setAnswers] = useState<Record<string, AnswerValue>>({})
-  const [error, setError] = useState<string | null>(null)
-  const [submitting, setSubmitting] = useState(false)
-  const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null)
-  const advanceTimer = useRef<number | undefined>(undefined)
+  const [index, setIndex] = useState(0);
+  const [answers, setAnswers] = useState<Record<string, AnswerValue>>({});
+  const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
+  const advanceTimer = useRef<number | undefined>(undefined);
 
   const question = questions[index];
   const value = answers[question.id];
@@ -65,21 +65,21 @@ export function Survey({ questions, onComplete }: SurveyProps) {
   }, [index]);
 
   function setAnswer(id: string, answer: AnswerValue) {
-    setError(null)
-    setAnswers((prev) => ({ ...prev, [id]: answer }))
+    setError(null);
+    setAnswers((prev) => ({ ...prev, [id]: answer }));
   }
 
   function isEmpty(answer: AnswerValue | undefined) {
     return (
       answer === undefined ||
-      (typeof answer === 'string' && answer.trim() === '') ||
+      (typeof answer === "string" && answer.trim() === "") ||
       (Array.isArray(answer) && answer.length === 0)
-    )
+    );
   }
 
   async function next(currentAnswers = answers) {
-    const answer = currentAnswers[question.id]
-    const empty = isEmpty(answer)
+    const answer = currentAnswers[question.id];
+    const empty = isEmpty(answer);
     if (question.required && empty) {
       setError("Please fill this in");
       return;
@@ -104,6 +104,7 @@ export function Survey({ questions, onComplete }: SurveyProps) {
       .map((q) => ({
         questionId: q.id,
         question: q.question,
+        subLabel: q.subLabel,
         answer: currentAnswers[q.id],
       }));
 
@@ -122,13 +123,15 @@ export function Survey({ questions, onComplete }: SurveyProps) {
 
   /** Toggle one selection of a multichoice question — no auto-advance. */
   function toggleOption(option: string) {
-    if (submitting) return
-    haptics.tick()
-    const current = Array.isArray(value) ? value : []
+    if (submitting) return;
+    haptics.tick();
+    const current = Array.isArray(value) ? value : [];
     setAnswer(
       question.id,
-      current.includes(option) ? current.filter((o) => o !== option) : [...current, option],
-    )
+      current.includes(option)
+        ? current.filter((o) => o !== option)
+        : [...current, option],
+    );
   }
 
   /** Select an option, show it highlighted briefly, then advance. */
@@ -165,6 +168,7 @@ export function Survey({ questions, onComplete }: SurveyProps) {
           {question.question}
           {question.required && <span className="survey__required"></span>}
         </h2>
+        {question.subLabel && <h3>{question.subLabel}</h3>}
 
         {textAttrs && (
           <input
@@ -214,28 +218,29 @@ export function Survey({ questions, onComplete }: SurveyProps) {
           </div>
         )}
 
-        {question.type === 'multichoice' && (
+        {question.type === "multichoice" && (
           <div className="survey__options">
             <p className="survey__multi-hint">Choose all that apply</p>
             {question.options?.map((option, i) => {
-              const selected = Array.isArray(value) && value.includes(option)
+              const selected = Array.isArray(value) && value.includes(option);
               return (
                 <button
                   key={option}
                   type="button"
-                  className={`survey__option${selected ? ' survey__option--selected' : ''}`}
+                  className={`survey__option${selected ? " survey__option--selected" : ""}`}
                   aria-pressed={selected}
-                  onClick={() => toggleOption(option)}
-                >
-                  <span className="survey__option-key">{selected ? '✓' : LETTERS[i]}</span>
+                  onClick={() => toggleOption(option)}>
+                  <span className="survey__option-key">
+                    {selected ? "✓" : LETTERS[i]}
+                  </span>
                   {option}
                 </button>
-              )
+              );
             })}
           </div>
         )}
 
-        {question.type === 'scale' && (
+        {question.type === "scale" && (
           <div className="survey__scale">
             <div className="survey__scale-buttons">
               {Array.from(

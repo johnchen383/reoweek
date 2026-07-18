@@ -13,7 +13,8 @@ export function Interlude({ onAccept, onSkip }: InterludeProps) {
       <div className="interlude__emoji">💬</div>
       <div className="interlude__eyebrow">Thanks for playing!</div>
       <h2 className="interlude__title">
-        We'd love to hear <span>your feedback</span>
+        We'd love to hear <br />
+        <span>your feedback</span>
       </h2>
       <p className="interlude__sub">1 min survey | $200 prize pool</p>
       <div className="interlude__actions">

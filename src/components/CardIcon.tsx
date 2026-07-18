@@ -313,6 +313,197 @@ const ICONS: Record<string, ReactElement> = {
     </svg>
   ),
 
+  "Bubble tea": (
+    <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M28 30 H92 L80 96 a10 10 0 0 1 -10 9 H50 a10 10 0 0 1 -10 -9 Z"
+        fill="#f3dcdc"
+        stroke="#2a0a0c"
+        strokeWidth="4"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M28 30 H92"
+        stroke="#2a0a0c"
+        strokeWidth="4"
+        strokeLinecap="round"
+      />
+      <rect
+        x="55"
+        y="14"
+        width="10"
+        height="24"
+        rx="3"
+        fill="#911223"
+        stroke="#2a0a0c"
+        strokeWidth="3"
+      />
+      <path
+        d="M31 58 H89"
+        stroke="#E22A30"
+        strokeWidth="3"
+        strokeLinecap="round"
+      />
+      <circle cx="47" cy="76" r="4.5" fill="#2a0a0c" />
+      <circle cx="61" cy="81" r="4.5" fill="#2a0a0c" />
+      <circle cx="73" cy="76" r="4.5" fill="#2a0a0c" />
+      <circle cx="58" cy="90" r="4.5" fill="#2a0a0c" />
+    </svg>
+  ),
+
+  Matcha: (
+    <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* whisk handle */}
+      <path
+        d="M60 14 V42"
+        stroke="#2a0a0c"
+        strokeWidth="5"
+        strokeLinecap="round"
+      />
+
+      {/* whisk tines */}
+      <path
+        d="M48 42 L44 58
+         M52 42 L50 60
+         M56 42 L56 61
+         M60 42 L60 62
+         M64 42 L64 61
+         M68 42 L70 60
+         M72 42 L76 58"
+        stroke="#911223"
+        strokeWidth="3"
+        strokeLinecap="round"
+      />
+
+      {/* bowl */}
+      <path
+        d="M34 68 H86 L79 96
+         A8 8 0 0 1 71 102
+         H49
+         A8 8 0 0 1 41 96 Z"
+        fill="#FEFAF4"
+        stroke="#2a0a0c"
+        strokeWidth="4"
+        strokeLinejoin="round"
+      />
+
+      {/* matcha */}
+      <ellipse
+        cx="60"
+        cy="68"
+        rx="26"
+        ry="6"
+        fill="#81B55B"
+        stroke="#2a0a0c"
+        strokeWidth="4"
+      />
+
+      {/* foam */}
+      <path
+        d="M50 70 Q55 67 60 70 T70 70"
+        stroke="#ffffff"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  ),
+
+  "Super hot": (
+    <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M60 14
+         C74 32 55 40 55 56
+         C55 66 61 72 66 74
+         C68 67 77 62 77 48
+         C89 60 94 73 94 86
+         C94 102 80 110 60 110
+         C40 110 26 100 26 84
+         C26 66 38 54 49 44
+         C47 54 51 60 58 64
+         C55 52 56 34 60 14Z"
+        fill="#E22A30"
+        stroke="#2a0a0c"
+        strokeWidth="4"
+        strokeLinejoin="round"
+      />
+
+      <path
+        d="M60 48
+         C66 57 60 64 60 71
+         C60 78 65 84 71 84
+         C76 84 80 79 80 72
+         C80 65 75 58 69 54
+         C69 60 65 64 61 65
+         C61 59 59 55 60 48Z"
+        fill="#FEFAF4"
+      />
+
+      <path
+        d="M18 46 l7 4 M102 46 l-7 4 M60 101 v9"
+        stroke="#911223"
+        strokeWidth="3.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  ),
+
+  "Super kind": (
+    <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* heart */}
+      <path
+        d="M82 30
+         C82 22 92 20 96 27
+         C100 20 110 22 110 30
+         C110 39 102 45 96 50
+         C90 45 82 39 82 30Z"
+        fill="#E22A30"
+        stroke="#2a0a0c"
+        strokeWidth="3.5"
+        strokeLinejoin="round"
+      />
+
+      {/* hand */}
+      <path
+        d="M34 77
+         C34 68 39 62 45 62
+         V46
+         C45 41 48 38 52 38
+         C56 38 59 41 59 46
+         V60
+         H63
+         V42
+         C63 37 66 34 70 34
+         C74 34 77 37 77 42
+         V66
+         C77 84 66 96 51 96
+         H44
+         C38 96 34 90 34 82Z"
+        fill="#FEFAF4"
+        stroke="#2a0a0c"
+        strokeWidth="4"
+        strokeLinejoin="round"
+        strokeLinecap="round"
+      />
+
+      {/* fingers */}
+      <path
+        d="M59 46 V64
+         M68 42 V64"
+        stroke="#2a0a0c"
+        strokeWidth="3"
+        strokeLinecap="round"
+      />
+
+      {/* sparkle */}
+      <path
+        d="M22 24 v8 M18 28 h8"
+        stroke="#911223"
+        strokeWidth="3.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  ),
+
   "Jesus's way": (
     <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
