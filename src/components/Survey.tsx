@@ -129,7 +129,7 @@ export function Survey({ questions, onComplete }: SurveyProps) {
     const current = Array.isArray(value) ? value : [];
     const notInterested =
       option === "I'm not interested in anything at the moment";
-    if (notInterested) {
+    if (notInterested && !current.includes(option)) {
       setOverrideLast(true);
     } else {
       setOverrideLast(false);
@@ -167,6 +167,23 @@ export function Survey({ questions, onComplete }: SurveyProps) {
     }
   }
 
+  function sanitiseSubLabel(label: string) {
+    const drawOption = "Going in the draw to win the SONY WH-CH720N headphones";
+    const prevSelectionValue = answers[questions[index - 1].id];
+    const prevSelection = Array.isArray(prevSelectionValue)
+      ? prevSelectionValue
+      : [];
+    console.log("prevSelection: ", prevSelection);
+    if (prevSelection.length === 1 && prevSelection.includes(drawOption)) {
+      return label.replace(" with more details or", "");
+    } else if (prevSelection.filter((o) => o === drawOption).length === 0) {
+      return label.replace(" or if you win the draw!", ".");
+    }
+
+    return label;
+  }
+
+  console.log("value: ", value);
   return (
     <div className="survey">
       <div className="survey__progress-track" aria-hidden="true">
@@ -185,7 +202,9 @@ export function Survey({ questions, onComplete }: SurveyProps) {
           {question.required && <span className="survey__required"></span>}
         </h2>
         {question.subLabel && (
-          <p className="survey__sub-label">{question.subLabel}</p>
+          <p className="survey__sub-label">
+            {sanitiseSubLabel(question.subLabel)}
+          </p>
         )}
 
         {textAttrs && (
