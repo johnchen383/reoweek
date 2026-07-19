@@ -122,36 +122,48 @@ const ICONS: Record<string, ReactElement> = {
 
   Happiness: (
     <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* face */}
       <circle
         cx="60"
-        cy="62"
+        cy="60"
         r="36"
         fill="#FEFAF4"
         stroke="#2a0a0c"
         strokeWidth="4"
       />
+      {/* happy eyes */}
       <path
-        d="M40 57 q6 -8 12 0"
+        d="M39 53 q8 -10 16 0"
         stroke="#2a0a0c"
         strokeWidth="4"
         strokeLinecap="round"
       />
       <path
-        d="M68 57 q6 -8 12 0"
+        d="M65 53 q8 -10 16 0"
         stroke="#2a0a0c"
         strokeWidth="4"
         strokeLinecap="round"
       />
+      {/* beaming grin */}
       <path
-        d="M42 68 Q60 88 78 68"
-        stroke="#E22A30"
-        strokeWidth="5"
+        d="M41 64 Q60 88 79 64 Z"
+        fill="#E22A30"
+        stroke="#2a0a0c"
+        strokeWidth="4"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M41 64 H79"
+        stroke="#2a0a0c"
+        strokeWidth="4"
         strokeLinecap="round"
       />
-      <ellipse cx="34" cy="67" rx="5" ry="3.5" fill="#f3dcdc" />
-      <ellipse cx="86" cy="67" rx="5" ry="3.5" fill="#f3dcdc" />
+      {/* blush */}
+      <ellipse cx="31" cy="66" rx="5" ry="3.5" fill="#f3dcdc" />
+      <ellipse cx="89" cy="66" rx="5" ry="3.5" fill="#f3dcdc" />
+      {/* sparkles */}
       <path
-        d="M25 25 l6 6 M95 25 l-6 6 M60 11 v9"
+        d="M20 26 l6 6 M100 26 l-6 6 M60 6 v9"
         stroke="#911223"
         strokeWidth="3.5"
         strokeLinecap="round"
@@ -161,43 +173,56 @@ const ICONS: Record<string, ReactElement> = {
 
   Purpose: (
     <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* target rings */}
       <circle
-        cx="57"
-        cy="63"
-        r="36"
+        cx="52"
+        cy="66"
+        r="34"
         fill="#FEFAF4"
         stroke="#2a0a0c"
         strokeWidth="4"
       />
       <circle
-        cx="57"
-        cy="63"
-        r="23"
+        cx="52"
+        cy="66"
+        r="22"
         fill="#ffffff"
         stroke="#911223"
         strokeWidth="4"
       />
       <circle
-        cx="57"
-        cy="63"
-        r="10"
+        cx="52"
+        cy="66"
+        r="11"
         fill="#E22A30"
         stroke="#2a0a0c"
         strokeWidth="3.5"
       />
+      {/* shaft */}
       <path
-        d="M95 17 L63 57"
+        d="M62 56 L96 22"
         stroke="#2a0a0c"
         strokeWidth="4.5"
         strokeLinecap="round"
       />
+      {/* arrowhead in the bullseye */}
       <path
-        d="M93 20 l9 -11 M88 26 l9 -11"
+        d="M52 66 L66 60 L58 52 Z"
+        fill="#2a0a0c"
+        stroke="#2a0a0c"
+        strokeWidth="2.5"
+        strokeLinejoin="round"
+      />
+      {/* fletching */}
+      <path
+        d="M96 22 L84 25 M96 22 L93 34"
         stroke="#E22A30"
         strokeWidth="4"
         strokeLinecap="round"
       />
-      <path d="M63 57 L75 51 L66 44 Z" fill="#2a0a0c" />
+      {/* sparkles */}
+      <circle cx="18" cy="44" r="2.5" fill="#911223" />
+      <circle cx="92" cy="98" r="2.5" fill="#911223" />
     </svg>
   ),
 
@@ -315,39 +340,54 @@ const ICONS: Record<string, ReactElement> = {
 
   "Bubble tea": (
     <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* cup */}
       <path
-        d="M28 30 H92 L80 96 a10 10 0 0 1 -10 9 H50 a10 10 0 0 1 -10 -9 Z"
-        fill="#f3dcdc"
+        d="M28 34 H92 L82 96 A10 10 0 0 1 72 105 H48 A10 10 0 0 1 38 96 Z"
+        fill="#FEFAF4"
         stroke="#2a0a0c"
         strokeWidth="4"
         strokeLinejoin="round"
       />
+      {/* drink */}
       <path
-        d="M28 30 H92"
+        d="M31.5 52 H88.5 L82 96 A10 10 0 0 1 72 105 H48 A10 10 0 0 1 38 96 Z"
+        fill="#f3dcdc"
+      />
+      {/* liquid surface */}
+      <path
+        d="M33 52 H87"
+        stroke="#E22A30"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+      />
+      {/* shine */}
+      <path
+        d="M44 64 V82"
+        stroke="#ffffff"
+        strokeWidth="3.5"
+        strokeLinecap="round"
+      />
+      {/* straw */}
+      <path
+        d="M69.3 9.4 L78.7 12.6 L62.7 58.6 L53.3 55.4 Z"
+        fill="#911223"
+        stroke="#2a0a0c"
+        strokeWidth="3"
+        strokeLinejoin="round"
+      />
+      {/* lid */}
+      <path
+        d="M24 34 H96"
         stroke="#2a0a0c"
         strokeWidth="4"
         strokeLinecap="round"
       />
-      <rect
-        x="55"
-        y="14"
-        width="10"
-        height="24"
-        rx="3"
-        fill="#911223"
-        stroke="#2a0a0c"
-        strokeWidth="3"
-      />
-      <path
-        d="M31 58 H89"
-        stroke="#E22A30"
-        strokeWidth="3"
-        strokeLinecap="round"
-      />
-      <circle cx="47" cy="76" r="4.5" fill="#2a0a0c" />
-      <circle cx="61" cy="81" r="4.5" fill="#2a0a0c" />
-      <circle cx="73" cy="76" r="4.5" fill="#2a0a0c" />
-      <circle cx="58" cy="90" r="4.5" fill="#2a0a0c" />
+      {/* pearls */}
+      <circle cx="50" cy="86" r="4.5" fill="#2a0a0c" />
+      <circle cx="61" cy="90" r="4.5" fill="#2a0a0c" />
+      <circle cx="72" cy="86" r="4.5" fill="#2a0a0c" />
+      <circle cx="55" cy="96" r="4.5" fill="#2a0a0c" />
+      <circle cx="67" cy="96" r="4.5" fill="#2a0a0c" />
     </svg>
   ),
 
@@ -355,7 +395,7 @@ const ICONS: Record<string, ReactElement> = {
     <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
       {/* whisk handle */}
       <path
-        d="M60 14 V42"
+        d="M60 12 V38"
         stroke="#2a0a0c"
         strokeWidth="5"
         strokeLinecap="round"
@@ -363,46 +403,60 @@ const ICONS: Record<string, ReactElement> = {
 
       {/* whisk tines */}
       <path
-        d="M48 42 L44 58
-         M52 42 L50 60
-         M56 42 L56 61
-         M60 42 L60 62
-         M64 42 L64 61
-         M68 42 L70 60
-         M72 42 L76 58"
+        d="M46 40 C44 52 46 61 50 67
+         M52 40 C51 55 52 63 54 68
+         M60 40 V69
+         M68 40 C69 55 68 63 66 68
+         M74 40 C76 52 74 61 70 67"
         stroke="#911223"
         strokeWidth="3"
         strokeLinecap="round"
       />
 
+      {/* whisk collar */}
+      <path
+        d="M46 40 H74"
+        stroke="#2a0a0c"
+        strokeWidth="4"
+        strokeLinecap="round"
+      />
+
       {/* bowl */}
       <path
-        d="M34 68 H86 L79 96
-         A8 8 0 0 1 71 102
-         H49
-         A8 8 0 0 1 41 96 Z"
+        d="M30 70 H90 L83 98
+         A9 9 0 0 1 74 105
+         H46
+         A9 9 0 0 1 37 98 Z"
         fill="#FEFAF4"
         stroke="#2a0a0c"
         strokeWidth="4"
         strokeLinejoin="round"
       />
 
-      {/* matcha */}
+      {/* matcha surface */}
       <ellipse
         cx="60"
-        cy="68"
-        rx="26"
-        ry="6"
+        cy="70"
+        rx="29"
+        ry="7"
         fill="#81B55B"
         stroke="#2a0a0c"
         strokeWidth="4"
       />
 
-      {/* foam */}
+      {/* foam swirl */}
       <path
-        d="M50 70 Q55 67 60 70 T70 70"
+        d="M49 71 Q56 67 62 71 T74 70"
         stroke="#ffffff"
         strokeWidth="2.5"
+        strokeLinecap="round"
+      />
+
+      {/* sparkles */}
+      <path
+        d="M22 54 l5 3 M98 54 l-5 3"
+        stroke="#911223"
+        strokeWidth="3"
         strokeLinecap="round"
       />
     </svg>
@@ -587,6 +641,176 @@ const ICONS: Record<string, ReactElement> = {
         strokeWidth="2.5"
       />
       <circle cx="80" cy="87.5" r="3" fill="#FEFAF4" />
+    </svg>
+  ),
+
+  "Good person": (
+    <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* halo */}
+      <ellipse
+        cx="60"
+        cy="22"
+        rx="19"
+        ry="6.5"
+        fill="none"
+        stroke="#E22A30"
+        strokeWidth="4"
+      />
+      {/* head */}
+      <circle
+        cx="60"
+        cy="45"
+        r="15"
+        fill="#FEFAF4"
+        stroke="#2a0a0c"
+        strokeWidth="4"
+      />
+      {/* body */}
+      <path
+        d="M28 102 C28 80 42 63 60 63 C78 63 92 80 92 102 Z"
+        fill="#FEFAF4"
+        stroke="#2a0a0c"
+        strokeWidth="4"
+        strokeLinejoin="round"
+      />
+      {/* check on chest */}
+      <path
+        d="M50 87 l7 7 l13 -15"
+        stroke="#E22A30"
+        strokeWidth="5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      {/* sparkles */}
+      <path
+        d="M22 42 l6 4 M98 42 l-6 4"
+        stroke="#911223"
+        strokeWidth="3.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  ),
+
+  "Successful person": (
+    <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* handles */}
+      <path
+        d="M38 30 C24 30 24 50 40 48"
+        fill="none"
+        stroke="#2a0a0c"
+        strokeWidth="4"
+        strokeLinecap="round"
+      />
+      <path
+        d="M82 30 C96 30 96 50 80 48"
+        fill="none"
+        stroke="#2a0a0c"
+        strokeWidth="4"
+        strokeLinecap="round"
+      />
+      {/* cup */}
+      <path
+        d="M38 26 H82 V44 A22 22 0 0 1 38 44 Z"
+        fill="#E22A30"
+        stroke="#2a0a0c"
+        strokeWidth="4"
+        strokeLinejoin="round"
+      />
+      {/* star */}
+      <path
+        d="M60 33 L62.2 39 L68.6 39.2 L63.5 43.1 L65.3 49.3 L60 45.7 L54.7 49.3 L56.5 43.1 L51.4 39.2 L57.8 39 Z"
+        fill="#FEFAF4"
+        stroke="#2a0a0c"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+      {/* stem */}
+      <path d="M60 66 V80" stroke="#2a0a0c" strokeWidth="4" />
+      {/* base */}
+      <path
+        d="M44 96 C44 86 52 80 60 80 C68 80 76 86 76 96 Z"
+        fill="#f3dcdc"
+        stroke="#2a0a0c"
+        strokeWidth="4"
+        strokeLinejoin="round"
+      />
+      <rect
+        x="40"
+        y="96"
+        width="40"
+        height="10"
+        rx="4"
+        fill="#911223"
+        stroke="#2a0a0c"
+        strokeWidth="3.5"
+      />
+      {/* sparkles */}
+      <path
+        d="M60 8 v9 M30 14 l5 6 M90 14 l-5 6"
+        stroke="#911223"
+        strokeWidth="3.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  ),
+
+  Nothing: (
+    <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* void ring */}
+      <circle
+        cx="60"
+        cy="60"
+        r="34"
+        fill="#FEFAF4"
+        stroke="#2a0a0c"
+        strokeWidth="4"
+      />
+      <circle cx="60" cy="60" r="21" fill="#f3dcdc" />
+      {/* slash → empty-set / "nothing" */}
+      <path
+        d="M32 88 L88 32"
+        stroke="#E22A30"
+        strokeWidth="5"
+        strokeLinecap="round"
+      />
+      {/* faint fading sparkles */}
+      <circle cx="22" cy="30" r="2.5" fill="#911223" />
+      <circle cx="99" cy="90" r="2.5" fill="#911223" />
+    </svg>
+  ),
+
+  "An afterlife": (
+    <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* light rays */}
+      <path
+        d="M60 8 V20 M28 16 l6 10 M92 16 l-6 10 M10 44 l12 4 M110 44 l-12 4"
+        stroke="#911223"
+        strokeWidth="3.5"
+        strokeLinecap="round"
+      />
+      {/* light */}
+      <circle
+        cx="60"
+        cy="48"
+        r="19"
+        fill="#E22A30"
+        stroke="#2a0a0c"
+        strokeWidth="4"
+      />
+      <circle cx="60" cy="48" r="10" fill="#FEFAF4" />
+      {/* cloud */}
+      <path
+        d="M30 96
+         C18 96 18 79 32 78
+         C30 65 50 65 53 76
+         C57 62 76 62 80 76
+         C94 76 96 96 84 96
+         Z"
+        fill="#ffffff"
+        stroke="#2a0a0c"
+        strokeWidth="4"
+        strokeLinejoin="round"
+      />
     </svg>
   ),
 };

@@ -16,7 +16,9 @@ export function Interlude({ onAccept, onSkip }: InterludeProps) {
         We'd love to hear <br />
         <span>your feedback</span>
       </h2>
-      <p className="interlude__sub">1 min survey | $200 prize pool</p>
+      <p className="interlude__sub">
+        1 min survey | Win the SONY WH-CH720N HEADPHONES
+      </p>
       <div className="interlude__actions">
         <button
           type="button"

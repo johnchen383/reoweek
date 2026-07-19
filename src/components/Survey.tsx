@@ -81,7 +81,7 @@ export function Survey({ questions, onComplete }: SurveyProps) {
     const answer = currentAnswers[question.id];
     const empty = isEmpty(answer);
     if (question.required && empty) {
-      setError("Please fill this in");
+      setError("Please fill in this field!");
       return;
     }
     if (!empty && typeof answer === "string") {
@@ -130,7 +130,14 @@ export function Survey({ questions, onComplete }: SurveyProps) {
       question.id,
       current.includes(option)
         ? current.filter((o) => o !== option)
-        : [...current, option],
+        : option === "I'm not interested in anything at the moment"
+          ? [option]
+          : [
+              ...current.filter(
+                (o) => o !== "I'm not interested in anything at the moment",
+              ),
+              option,
+            ],
     );
   }
 
@@ -168,7 +175,9 @@ export function Survey({ questions, onComplete }: SurveyProps) {
           {question.question}
           {question.required && <span className="survey__required"></span>}
         </h2>
-        {question.subLabel && <h3>{question.subLabel}</h3>}
+        {question.subLabel && (
+          <p className="survey__sub-label">{question.subLabel}</p>
+        )}
 
         {textAttrs && (
           <input
