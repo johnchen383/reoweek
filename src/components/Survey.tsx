@@ -46,6 +46,7 @@ export function Survey({ questions, onComplete }: SurveyProps) {
   const [answers, setAnswers] = useState<Record<string, AnswerValue>>({});
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [overrideLast, setOverrideLast] = useState(false);
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
   const advanceTimer = useRef<number | undefined>(undefined);
 
@@ -92,7 +93,7 @@ export function Survey({ questions, onComplete }: SurveyProps) {
       }
     }
 
-    if (!isLast) {
+    if (!overrideLast && !isLast) {
       setError(null);
       setIndex(index + 1);
       return;
@@ -126,11 +127,19 @@ export function Survey({ questions, onComplete }: SurveyProps) {
     if (submitting) return;
     haptics.tick();
     const current = Array.isArray(value) ? value : [];
+    const notInterested =
+      option === "I'm not interested in anything at the moment";
+    if (notInterested) {
+      setOverrideLast(true);
+    } else {
+      setOverrideLast(false);
+    }
+
     setAnswer(
       question.id,
       current.includes(option)
         ? current.filter((o) => o !== option)
-        : option === "I'm not interested in anything at the moment"
+        : notInterested
           ? [option]
           : [
               ...current.filter(
@@ -282,7 +291,7 @@ export function Survey({ questions, onComplete }: SurveyProps) {
             className="button button--primary"
             onClick={() => next()}
             disabled={submitting}>
-            {submitting ? "Saving…" : isLast ? "Submit" : "OK"}
+            {submitting ? "Saving…" : overrideLast || isLast ? "Submit" : "OK"}
           </button>
           {/* {(textAttrs || question.type === "longtext") && !submitting && (
             <span className="survey__enter-hint">
