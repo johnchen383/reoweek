@@ -23,6 +23,7 @@ export const FOLLOW_UP_STATUSES = [
   'Contacted',
   'Followed up',
   'Resolved',
+  'Bestie',
 ] as const
 
 const followUpSchema = new Schema(

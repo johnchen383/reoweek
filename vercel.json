@@ -6,6 +6,7 @@
   "rewrites": [
     { "source": "/admin", "destination": "/index.html" },
     { "source": "/followups", "destination": "/index.html" },
-    { "source": "/banner", "destination": "/index.html" }
+    { "source": "/banner", "destination": "/index.html" },
+    { "source": "/wheel", "destination": "/index.html" }
   ]
 }

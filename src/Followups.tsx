@@ -19,6 +19,15 @@ const TIER_LABELS: Record<Tier, string> = {
   stale: 'Stale',
 }
 
+// Hover text for the filter chips, derived from the live rules so it can't
+// drift from what the classifier actually does.
+const TIER_TOOLTIPS: Record<Tier, string> = {
+  hot: `Answered any of: ${tierRules.hot.join(' / ')}`,
+  warm: `No hot answers, but answered any of: ${tierRules.warm.join(' / ')}`,
+  cold: `No hot or warm answers, but answered any of: ${tierRules.cold.join(' / ')}`,
+  stale: 'None of the hot, warm, or cold answers',
+}
+
 function PotatoChip({ tier }: { tier: Tier }) {
   return (
     <span className={`potato potato--${tier}`}>
@@ -389,6 +398,7 @@ export default function Followups() {
           type="button"
           className={`potato potato--filter${tierFilter === null ? ' potato--active' : ''}`}
           onClick={() => setTierFilter(null)}
+          title="Everyone with a completed survey"
         >
           All · {rows.length}
         </button>
@@ -398,6 +408,7 @@ export default function Followups() {
             type="button"
             className={`potato potato--${tier} potato--filter${tierFilter === tier ? ' potato--active' : ''}`}
             onClick={() => setTierFilter(tierFilter === tier ? null : tier)}
+            title={TIER_TOOLTIPS[tier]}
           >
             <span className="potato__dot" />
             {TIER_LABELS[tier]} · {count}

@@ -4,6 +4,7 @@ import App from './App.tsx'
 import Admin from './Admin.tsx'
 import Banner from './Banner.tsx'
 import Followups from './Followups.tsx'
+import Wheel from './Wheel.tsx'
 import './styles/main.scss'
 
 // Unlinked routes: /admin (analytics) and /followups (contact worksheet) are
@@ -15,6 +16,7 @@ function page() {
   if (path === '/admin') return <Admin />
   if (path === '/followups') return <Followups />
   if (path === '/banner') return <Banner />
+  if (path === '/wheel') return <Wheel />
   return <App />
 }
 
