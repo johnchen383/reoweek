@@ -16,7 +16,10 @@ persisted to MongoDB via the `/api/responses` endpoints.
 
 An unlinked analytics dashboard lives at **`/admin`** — head-to-head splits,
 survey distributions, the raw response table, and a (confirmed) clear-all-data
-action. It isn't linked from anywhere, and it's gated by the
+action. A companion worksheet at **`/followups`** buckets every completed
+survey into priority tiers (hot / warm / cold / stale "potatoes", rules in
+`src/data/followups.json`) and adds a persisted status / contactee / notes
+column per person for tracking contact work. Same password as `/admin`. It isn't linked from anywhere, and it's gated by the
 **`ADMIN_PASSWORD`** env variable: the page prompts for the password and the
 API checks it server-side on the admin endpoints (list + delete). If
 `ADMIN_PASSWORD` is unset, those endpoints stay locked. Setting

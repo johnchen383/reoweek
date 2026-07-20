@@ -1,4 +1,4 @@
-import type { AppConfig, Choice, GameResponse, SurveyAnswer } from '../types'
+import type { AppConfig, Choice, FollowUp, GameResponse, SurveyAnswer } from '../types'
 
 const BASE = '/api'
 
@@ -58,4 +58,10 @@ export const api = {
     request<GameResponse[]>('/responses', { headers: adminHeaders(password) }),
   deleteAllResponses: (password: string) =>
     request<void>('/responses', { method: 'DELETE', headers: adminHeaders(password) }),
+  updateFollowUp: (id: string, followUp: FollowUp, password: string) =>
+    request<GameResponse>(`/responses/${id}`, {
+      method: 'PATCH',
+      headers: adminHeaders(password),
+      body: JSON.stringify({ followUp }),
+    }),
 }

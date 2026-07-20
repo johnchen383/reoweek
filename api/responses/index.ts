@@ -76,6 +76,11 @@ function serialize(doc: any) {
     choices: doc.choices ?? [],
     survey: doc.survey ?? [],
     surveyCompletedAt: doc.surveyCompletedAt ?? null,
+    followUp: {
+      status: doc.followUp?.status ?? 'Not Contacted',
+      contactee: doc.followUp?.contactee ?? '',
+      notes: doc.followUp?.notes ?? '',
+    },
     createdAt: doc.createdAt,
     updatedAt: doc.updatedAt,
   }

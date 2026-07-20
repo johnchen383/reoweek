@@ -18,6 +18,26 @@ const surveyAnswerSchema = new Schema(
   { _id: false },
 )
 
+export const FOLLOW_UP_STATUSES = [
+  'Not Contacted',
+  'Contacted',
+  'Followed up',
+  'Resolved',
+] as const
+
+const followUpSchema = new Schema(
+  {
+    status: {
+      type: String,
+      enum: FOLLOW_UP_STATUSES,
+      default: 'Not Contacted',
+    },
+    contactee: { type: String, trim: true, default: '', maxlength: 200 },
+    notes: { type: String, trim: true, default: '', maxlength: 2000 },
+  },
+  { _id: false },
+)
+
 const responseSchema = new Schema(
   {
     choices: {
@@ -35,6 +55,10 @@ const responseSchema = new Schema(
     surveyCompletedAt: {
       type: Date,
       default: null,
+    },
+    followUp: {
+      type: followUpSchema,
+      default: () => ({}),
     },
   },
   { timestamps: true },

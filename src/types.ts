@@ -52,12 +52,30 @@ export interface AppConfig {
   enableDelete: boolean;
 }
 
+export const FOLLOW_UP_STATUSES = [
+  "Not Contacted",
+  "Contacted",
+  "Followed up",
+  "Resolved",
+  "Bestie"
+] as const;
+
+export type FollowUpStatus = (typeof FOLLOW_UP_STATUSES)[number];
+
+/** Follow-up workflow state, edited on /followups. */
+export interface FollowUp {
+  status: FollowUpStatus;
+  contactee: string;
+  notes: string;
+}
+
 /** A persisted play-through: game choices plus (eventually) survey answers. */
 export interface GameResponse {
   id: string;
   choices: Choice[];
   survey: SurveyAnswer[];
   surveyCompletedAt: string | null;
+  followUp: FollowUp;
   createdAt: string;
   updatedAt: string;
 }

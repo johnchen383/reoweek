@@ -2,12 +2,13 @@ import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { timingSafeEqual } from 'node:crypto'
 import mongoose from 'mongoose'
 import { connectToDatabase } from '../../lib/mongodb.js'
-import { ResponseModel } from '../../lib/models/Response.js'
+import { FOLLOW_UP_STATUSES, ResponseModel } from '../../lib/models/Response.js'
 
 /**
  * /api/responses/:id
- *   GET - fetch a single response — admin only
- *   PUT - attach survey answers to an existing response
+ *   GET   - fetch a single response — admin only
+ *   PUT   - attach survey answers to an existing response
+ *   PATCH - update follow-up state (status / contactee / notes) — admin only
  */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const { id } = req.query
@@ -43,8 +44,34 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return res.status(200).json(serialize(response))
       }
 
+      case 'PATCH': {
+        if (!isAuthorized(req)) {
+          return res.status(401).json({ message: 'Unauthorized' })
+        }
+        const { followUp } = req.body ?? {}
+        const status = followUp?.status
+        if (status !== undefined && !FOLLOW_UP_STATUSES.includes(status)) {
+          return res.status(400).json({
+            message: `status must be one of: ${FOLLOW_UP_STATUSES.join(', ')}`,
+          })
+        }
+        const response = await ResponseModel.findByIdAndUpdate(
+          id,
+          {
+            followUp: {
+              status: status ?? 'Not Contacted',
+              contactee: typeof followUp?.contactee === 'string' ? followUp.contactee : '',
+              notes: typeof followUp?.notes === 'string' ? followUp.notes : '',
+            },
+          },
+          { new: true, runValidators: true },
+        ).lean()
+        if (!response) return res.status(404).json({ message: 'Response not found' })
+        return res.status(200).json(serialize(response))
+      }
+
       default:
-        res.setHeader('Allow', ['GET', 'PUT'])
+        res.setHeader('Allow', ['GET', 'PUT', 'PATCH'])
         return res.status(405).json({ message: `Method ${req.method} not allowed` })
     }
   } catch (err) {
@@ -70,6 +97,11 @@ function serialize(doc: any) {
     choices: doc.choices ?? [],
     survey: doc.survey ?? [],
     surveyCompletedAt: doc.surveyCompletedAt ?? null,
+    followUp: {
+      status: doc.followUp?.status ?? 'Not Contacted',
+      contactee: doc.followUp?.contactee ?? '',
+      notes: doc.followUp?.notes ?? '',
+    },
     createdAt: doc.createdAt,
     updatedAt: doc.updatedAt,
   }

@@ -1607,3 +1607,359 @@ body {
     font-size: 18px;
   }
 }
+
+// ---- Follow-ups worksheet (/followups) ----
+
+.followups {
+  max-width: 1280px;
+
+  &__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 1.25rem;
+
+    & + & {
+      margin-top: -0.75rem;
+    }
+  }
+
+  &__table {
+    font-size: 13px;
+
+    th {
+      white-space: nowrap;
+    }
+
+    td {
+      padding-right: 14px;
+      min-width: 90px;
+    }
+  }
+
+  &__sortable {
+    cursor: pointer;
+    user-select: none;
+
+    &:hover {
+      color: $color-accent;
+    }
+
+    &--active {
+      color: $color-accent;
+    }
+  }
+
+  &__name {
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  &__input {
+    width: 100%;
+    min-width: 110px;
+    background: $color-bg;
+    border: 1.5px solid $color-border;
+    border-radius: $radius-sm;
+    font-family: $font-sans;
+    font-size: 13px;
+    color: $color-text;
+    padding: 6px 8px;
+
+    &:focus {
+      outline: none;
+      border-color: $color-accent;
+    }
+  }
+
+  &__notes {
+    min-width: 240px;
+    resize: vertical;
+    line-height: 1.45;
+  }
+
+  &__status {
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    border-radius: 999px;
+    padding: 7px 28px 7px 12px;
+    font-weight: 600;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23a87a7c' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-color: #fff;
+  }
+
+  &__row--saving {
+    opacity: 0.55;
+  }
+}
+
+// Potato tier chips — a colored dot plus the word, quiet by default. Labels
+// always accompany the color, so the hue is a secondary cue.
+.potato {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  padding: 3px 11px 3px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: $font-sans;
+  color: $color-text;
+  background: #fff;
+  border: 1.5px solid $color-border;
+
+  &__dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  &--hot &__dot {
+    background: $color-accent;
+  }
+
+  &--warm &__dot {
+    background: #e08a1e;
+  }
+
+  &--cold &__dot {
+    background: #6d92ab;
+  }
+
+  &--stale &__dot {
+    background: $color-unchosen;
+  }
+
+  &--stale {
+    color: $color-muted;
+  }
+
+  // Legend chips double as filters.
+  &--filter {
+    cursor: pointer;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+    &:hover {
+      border-color: $color-muted;
+    }
+  }
+
+  &--active {
+    border-color: $color-text;
+    box-shadow: 0 0 0 2px rgba($color-text, 0.12);
+  }
+}
+
+.followups__rule-warning {
+  background: rgba(224, 138, 30, 0.12);
+  border: 1px solid rgba(224, 138, 30, 0.5);
+  border-radius: $radius;
+  padding: 0.75rem 1rem;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 1.25rem;
+}
+
+// Followups table: decomposed option columns + compact details cell
+.followups__opt-group {
+  text-align: center;
+  font-size: 10px;
+  border-bottom: 1px solid $color-border;
+  padding-bottom: 4px;
+}
+
+.followups__table th.followups__opt-head {
+  white-space: normal;
+  min-width: 72px;
+  max-width: 110px;
+  font-size: 9.5px;
+  line-height: 1.35;
+  vertical-align: bottom;
+  padding-top: 6px;
+}
+
+.followups__table td.followups__check {
+  text-align: center;
+  min-width: 0;
+  color: $color-accent;
+  font-weight: 800;
+  font-size: 15px;
+}
+
+.followups__details {
+  font-size: 12px;
+  line-height: 1.5;
+  min-width: 150px;
+}
+
+.followups__detail-label {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: $color-muted;
+  margin-right: 2px;
+}
+
+.followups__notes-head {
+  min-width: 240px;
+}
+
+// ---- Frozen header + frozen left columns on the follow-ups table ----
+// The wrapper scrolls both axes; the two header rows stick to its top and
+// the Completed / Name / Potato columns stick to its left edge.
+
+$fu-col1: 112px; // Completed
+$fu-col2: 148px; // Name
+$fu-col3: 100px; // Potato
+$fu-head1: 34px; // height of the first (group) header row
+
+.followups .admin__table-wrap {
+  max-height: max(420px, calc(100vh - 280px));
+  overflow: auto;
+}
+
+.followups__table {
+  border-collapse: separate; // border-collapse breaks sticky rendering in Chrome
+  border-spacing: 0;
+
+  thead tr:first-child th {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    background: $color-bg;
+  }
+
+  .followups__opt-group {
+    height: $fu-head1;
+  }
+
+  thead tr:nth-child(2) th {
+    position: sticky;
+    top: $fu-head1;
+    z-index: 3;
+    background: $color-bg;
+  }
+
+  // First three columns freeze horizontally. In the header they're the
+  // rowSpan-2 cells of the first row; in the body, the first three tds.
+  thead tr:first-child th:nth-child(-n + 3) {
+    z-index: 4;
+    left: 0;
+  }
+
+  thead tr:first-child th:nth-child(2) {
+    left: $fu-col1;
+  }
+
+  thead tr:first-child th:nth-child(3) {
+    left: $fu-col1 + $fu-col2;
+  }
+
+  tbody td:nth-child(-n + 3) {
+    position: sticky;
+    z-index: 1;
+    background: $color-bg;
+  }
+
+  tbody td:nth-child(1) {
+    left: 0;
+  }
+
+  tbody td:nth-child(2) {
+    left: $fu-col1;
+  }
+
+  tbody td:nth-child(3) {
+    left: $fu-col1 + $fu-col2;
+  }
+
+  // Pin the widths so the sticky offsets stay true.
+  th:nth-child(1),
+  tbody td:nth-child(1) {
+    width: $fu-col1;
+    min-width: $fu-col1;
+    max-width: $fu-col1;
+  }
+
+  thead tr:first-child th:nth-child(2),
+  tbody td:nth-child(2) {
+    width: $fu-col2;
+    min-width: $fu-col2;
+    max-width: $fu-col2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  thead tr:first-child th:nth-child(3),
+  tbody td:nth-child(3) {
+    width: $fu-col3;
+    min-width: $fu-col3;
+    max-width: $fu-col3;
+  }
+
+  // A subtle edge marking where the frozen region ends.
+  thead tr:first-child th:nth-child(3),
+  tbody td:nth-child(3) {
+    border-right: 1.5px solid $color-border;
+  }
+}
+
+// Full-bleed worksheet: fill the viewport, hide the scrollbar chrome (the
+// content still scrolls), and give Details breathing room after the frozen
+// column edge.
+.followups {
+  max-width: none;
+}
+
+.followups .admin__table-wrap {
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.followups__table {
+  thead tr:first-child th:nth-child(4),
+  tbody td:nth-child(4) {
+    padding-left: 22px;
+  }
+}
+
+// No page scroll at all on /followups: the page is a fixed-height column and
+// the table wrapper flexes to exactly the remaining space, scrolling inside.
+.followups {
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding-top: 1.75rem;
+  padding-bottom: 1.25rem;
+}
+
+.followups .admin__table-wrap {
+  flex: 1;
+  min-height: 0;
+  max-height: none;
+}
+
+// Compact mode for /followups: the title block collapses to a slim bar.
+.followups__compact-bar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-bottom: 0.75rem;
+}
+
+.button--small {
+  padding: 6px 14px;
+  font-size: 10px;
+}
