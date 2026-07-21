@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { api, ApiError } from './api/client'
+import { EyeIcon } from './components/EyeIcon'
 import { burstConfetti } from './utils/confetti'
 import type { GameResponse } from './types'
 
@@ -204,7 +205,7 @@ export default function Wheel() {
               onClick={() => setShowPassword((v) => !v)}
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
-              {showPassword ? '🙈' : '👁️'}
+              <EyeIcon slashed={showPassword} />
             </button>
           </div>
           {error && <p className="admin-lock__error">{error}</p>}

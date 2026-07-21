@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { FormEvent } from 'react'
 import { api, ApiError } from './api/client'
+import { EyeIcon } from './components/EyeIcon'
 import { PAIRS, SURVEY_QUESTIONS } from './data/questions'
 import { downloadCsv, responsesToCsv } from './utils/csv'
 import type { GameResponse, Pair } from './types'
@@ -156,7 +157,7 @@ export default function Admin() {
               onClick={() => setShowPassword((v) => !v)}
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
-              {showPassword ? '🙈' : '👁️'}
+              <EyeIcon slashed={showPassword} />
             </button>
           </div>
           {error && <p className="admin-lock__error">{error}</p>}

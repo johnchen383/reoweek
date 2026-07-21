@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { api, ApiError } from './api/client'
+import { EyeIcon } from './components/EyeIcon'
 import { downloadCsv, toCsv } from './utils/csv'
 import { SURVEY_QUESTIONS } from './data/questions'
 import tierRules from './data/followups.json'
@@ -385,7 +386,7 @@ export default function Followups() {
               onClick={() => setShowPassword((v) => !v)}
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
-              {showPassword ? '🙈' : '👁️'}
+              <EyeIcon slashed={showPassword} />
             </button>
           </div>
           {error && <p className="admin-lock__error">{error}</p>}
@@ -557,19 +558,22 @@ export default function Followups() {
       <div className="followups__toolbar">
         <div className="followups__contactees">
           <span className="followups__toolbar-label">Contactees</span>
-          {contactees.map((name) => (
-            <span key={name} className="potato followups__contactee-chip">
-              {name}
-              <button
-                type="button"
-                className="followups__chip-x"
-                onClick={() => removeContactee(name)}
-                aria-label={`Remove contactee ${name}`}
-              >
-                ×
-              </button>
-            </span>
-          ))}
+          {contactees.map((name) => {
+            const assigned = rows.filter((r) => contacteeFor(r.response) === name).length
+            return (
+              <span key={name} className="potato followups__contactee-chip">
+                {name} · {assigned}
+                <button
+                  type="button"
+                  className="followups__chip-x"
+                  onClick={() => removeContactee(name)}
+                  aria-label={`Remove contactee ${name}`}
+                >
+                  ×
+                </button>
+              </span>
+            )
+          })}
           <form className="followups__add-contactee" onSubmit={addContactee}>
             <input
               className="followups__input"
