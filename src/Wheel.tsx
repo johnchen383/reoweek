@@ -69,6 +69,7 @@ export default function Wheel() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [excluded, setExcluded] = useState<Set<string>>(new Set())
+  const [showPassword, setShowPassword] = useState(false)
   const [spinning, setSpinning] = useState(false)
   const [liveIndex, setLiveIndex] = useState<number | null>(null)
   const [winner, setWinner] = useState<Entrant | null>(null)
@@ -185,17 +186,27 @@ export default function Wheel() {
         >
           <div className="admin__eyebrow">The Draw · Which Is Better?</div>
           <h1 className="admin-lock__title">Enter password</h1>
-          <input
-            className="admin-lock__input"
-            type="password"
-            autoFocus
-            placeholder="Password"
-            value={password}
-            onChange={(e) => {
-              setPassword(e.target.value)
-              setError(null)
-            }}
-          />
+          <div className="admin-lock__field">
+            <input
+              className="admin-lock__input"
+              type={showPassword ? 'text' : 'password'}
+              autoFocus
+              placeholder="Password"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value)
+                setError(null)
+              }}
+            />
+            <button
+              type="button"
+              className="admin-lock__eye"
+              onClick={() => setShowPassword((v) => !v)}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+            >
+              {showPassword ? '🙈' : '👁️'}
+            </button>
+          </div>
           {error && <p className="admin-lock__error">{error}</p>}
           <button type="submit" className="button button--primary" disabled={loading}>
             {loading ? 'Checking…' : 'Unlock'}

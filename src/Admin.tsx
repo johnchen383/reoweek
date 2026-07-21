@@ -57,6 +57,7 @@ const PASSWORD_STORAGE_KEY = 'wib-admin-password'
 
 export default function Admin() {
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [authed, setAuthed] = useState(false)
   const [responses, setResponses] = useState<GameResponse[]>([])
   const [loading, setLoading] = useState(false)
@@ -137,17 +138,27 @@ export default function Admin() {
         <form className="admin-lock__card" onSubmit={handleUnlock}>
           <div className="admin__eyebrow">Admin · Which Is Better?</div>
           <h1 className="admin-lock__title">Enter password</h1>
-          <input
-            className="admin-lock__input"
-            type="password"
-            autoFocus
-            placeholder="Password"
-            value={password}
-            onChange={(e) => {
-              setPassword(e.target.value)
-              setError(null)
-            }}
-          />
+          <div className="admin-lock__field">
+            <input
+              className="admin-lock__input"
+              type={showPassword ? 'text' : 'password'}
+              autoFocus
+              placeholder="Password"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value)
+                setError(null)
+              }}
+            />
+            <button
+              type="button"
+              className="admin-lock__eye"
+              onClick={() => setShowPassword((v) => !v)}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+            >
+              {showPassword ? '🙈' : '👁️'}
+            </button>
+          </div>
           {error && <p className="admin-lock__error">{error}</p>}
           <button type="submit" className="button button--primary" disabled={loading}>
             {loading ? 'Checking…' : 'Unlock'}

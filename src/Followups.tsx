@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { api, ApiError } from './api/client'
 import { downloadCsv, toCsv } from './utils/csv'
@@ -157,6 +157,7 @@ export default function Followups() {
       return next.size === FOLLOW_UP_STATUSES.length ? new Set() : next
     })
   }
+  const [showPassword, setShowPassword] = useState(false)
   const [compact, setCompact] = useState(() => {
     try {
       return localStorage.getItem('wib-followups-compact') === 'true'
@@ -366,17 +367,27 @@ export default function Followups() {
         <form className="admin-lock__card" onSubmit={handleUnlock}>
           <div className="admin__eyebrow">Follow-ups · Which Is Better?</div>
           <h1 className="admin-lock__title">Enter password</h1>
-          <input
-            className="admin-lock__input"
-            type="password"
-            autoFocus
-            placeholder="Password"
-            value={password}
-            onChange={(e) => {
-              setPassword(e.target.value)
-              setError(null)
-            }}
-          />
+          <div className="admin-lock__field">
+            <input
+              className="admin-lock__input"
+              type={showPassword ? 'text' : 'password'}
+              autoFocus
+              placeholder="Password"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value)
+                setError(null)
+              }}
+            />
+            <button
+              type="button"
+              className="admin-lock__eye"
+              onClick={() => setShowPassword((v) => !v)}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+            >
+              {showPassword ? '🙈' : '👁️'}
+            </button>
+          </div>
           {error && <p className="admin-lock__error">{error}</p>}
           <button type="submit" className="button button--primary" disabled={loading}>
             {loading ? 'Checking…' : 'Unlock'}
@@ -419,6 +430,13 @@ export default function Followups() {
     status,
     count: rows.filter((r) => statusFor(r.response) === status).length,
   }))
+  // Actionable rows nobody has picked up yet.
+  const unassignedCount = rows.filter(
+    (r) =>
+      !contacteeFor(r.response) &&
+      statusFor(r.response) !== 'Resolved' &&
+      statusFor(r.response) !== 'Invalid',
+  ).length
   const visible = rows.filter(
     (r) =>
       (!tierFilter || r.tier === tierFilter) &&
@@ -484,18 +502,20 @@ export default function Followups() {
         >
           All · {rows.length}
         </button>
-        {tierCounts.map(({ tier, count }) => (
-          <button
-            key={tier}
-            type="button"
-            className={`potato potato--${tier} potato--filter${tierFilter === tier ? ' potato--active' : ''}`}
-            onClick={() => setTierFilter(tierFilter === tier ? null : tier)}
-            title={TIER_TOOLTIPS[tier]}
-          >
-            <span className="potato__dot" />
-            {TIER_LABELS[tier]} · {count}
-          </button>
-        ))}
+        {tierCounts
+          .filter(({ count }) => count > 0)
+          .map(({ tier, count }) => (
+            <button
+              key={tier}
+              type="button"
+              className={`potato potato--${tier} potato--filter${tierFilter === tier ? ' potato--active' : ''}`}
+              onClick={() => setTierFilter(tierFilter === tier ? null : tier)}
+              title={TIER_TOOLTIPS[tier]}
+            >
+              <span className="potato__dot" />
+              {TIER_LABELS[tier]} · {count}
+            </button>
+          ))}
       </div>
 
       <div className="followups__legend">
@@ -523,6 +543,14 @@ export default function Followups() {
             </button>
           )
         })}
+        {!viewerContactee && (
+          <span
+            className={`potato followups__unassigned${unassignedCount > 0 ? ' followups__unassigned--attention' : ''}`}
+            title="No contactee assigned, and not Resolved or Invalid"
+          >
+            Unassigned · {unassignedCount}
+          </span>
+        )}
       </div>
 
       {!viewerContactee && (
