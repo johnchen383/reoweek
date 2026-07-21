@@ -5,6 +5,11 @@ function escapeCell(value: string) {
   return /[",\r\n]/.test(value) ? `"${value.replace(/"/g, '""')}"` : value
 }
 
+/** Serialize pre-built rows (header first) into CSV text. */
+export function toCsv(rows: string[][]) {
+  return rows.map((row) => row.map(escapeCell).join(',')).join('\r\n')
+}
+
 /** One row per response: timestamp, the pick for each matchup, each survey answer. */
 export function responsesToCsv(
   responses: GameResponse[],

@@ -64,4 +64,17 @@ export const api = {
       headers: adminHeaders(password),
       body: JSON.stringify({ followUp }),
     }),
+  listContactees: (password: string) =>
+    request<string[]>('/contactees', { headers: adminHeaders(password) }),
+  addContactee: (name: string, password: string) =>
+    request<{ name: string }>('/contactees', {
+      method: 'POST',
+      headers: adminHeaders(password),
+      body: JSON.stringify({ name }),
+    }),
+  deleteContactee: (name: string, password: string) =>
+    request<void>(`/contactees?name=${encodeURIComponent(name)}`, {
+      method: 'DELETE',
+      headers: adminHeaders(password),
+    }),
 }

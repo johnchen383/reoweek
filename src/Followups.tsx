@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { api, ApiError } from './api/client'
+import { downloadCsv, toCsv } from './utils/csv'
 import { SURVEY_QUESTIONS } from './data/questions'
 import tierRules from './data/followups.json'
 import { FOLLOW_UP_STATUSES } from './types'
@@ -68,6 +69,16 @@ const UNMATCHED_RULES = (['hot', 'warm', 'cold'] as const).flatMap((tier) =>
     .filter((rule) => !ALL_OPTIONS.has(normalize(rule)))
     .map((rule) => `${TIER_LABELS[tier]}: "${rule}"`),
 )
+
+/** The answer strings that earned this response its tier (all of them). */
+function qualifiersOf(response: GameResponse, tier: Tier): string[] {
+  if (tier === 'stale') return []
+  const answers = response.survey.flatMap((a) =>
+    Array.isArray(a.answer) ? a.answer : [String(a.answer)],
+  )
+  const rules = new Set(tierRules[tier].map(normalize))
+  return [...new Set(answers.filter((v) => rules.has(normalize(v))))]
+}
 
 function answerFor(response: GameResponse, questionId: string): string {
   const entry = response.survey.find((a) => a.questionId === questionId)
@@ -155,6 +166,9 @@ export default function Followups() {
       return false
     }
   })
+  const [contactees, setContactees] = useState<string[]>([])
+  const [newContactee, setNewContactee] = useState('')
+  const [exportScope, setExportScope] = useState('')
   // The previous sorted order — each new sort starts from it, so ties keep
   // their arrangement from earlier sorts (multi-level sorting by clicking).
   const orderRef = useRef<string[]>([])
@@ -177,9 +191,13 @@ export default function Followups() {
     setLoading(true)
     setError(null)
     try {
-      const data = await api.listResponses(pw)
+      const [data, contacteeNames] = await Promise.all([
+        api.listResponses(pw),
+        api.listContactees(pw),
+      ])
       setResponses(data)
       setEdits(Object.fromEntries(data.map((r) => [r.id, r.followUp])))
+      setContactees(contacteeNames)
       setAuthed(true)
       sessionStorage.setItem(PASSWORD_STORAGE_KEY, pw)
     } catch (err) {
@@ -226,6 +244,31 @@ export default function Followups() {
         next.delete(id)
         return next
       })
+    }
+  }
+
+  async function addContactee(e: FormEvent) {
+    e.preventDefault()
+    const name = newContactee.trim()
+    if (!name) return
+    setError(null)
+    try {
+      await api.addContactee(name, password)
+      setContactees((prev) => [...new Set([...prev, name])].sort((a, b) => a.localeCompare(b)))
+      setNewContactee('')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to add contactee')
+    }
+  }
+
+  async function removeContactee(name: string) {
+    setError(null)
+    try {
+      await api.deleteContactee(name, password)
+      setContactees((prev) => prev.filter((c) => c !== name))
+      if (exportScope === name) setExportScope('')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to remove contactee')
     }
   }
 
@@ -341,6 +384,29 @@ export default function Followups() {
   }
 
   const statusFor = (r: GameResponse) => edits[r.id]?.status ?? r.followUp.status
+  const contacteeFor = (r: GameResponse) => edits[r.id]?.contactee ?? r.followUp.contactee
+
+  /** Actionable rows only (not Resolved / Invalid), optionally one contactee. */
+  function exportFollowUps() {
+    const exportRows = rows.filter(({ response }) => {
+      const status = statusFor(response)
+      if (status === 'Resolved' || status === 'Invalid') return false
+      if (exportScope && contacteeFor(response) !== exportScope) return false
+      return true
+    })
+    const header = ['name', 'contact', 'is_student', 'potato', 'qualified_by', 'status', 'contactee']
+    const data = exportRows.map(({ response, tier }) => [
+      answerFor(response, 'name'),
+      answerFor(response, 'contact'),
+      answerFor(response, 'student'),
+      TIER_LABELS[tier],
+      qualifiersOf(response, tier).join('; '),
+      statusFor(response),
+      contacteeFor(response),
+    ])
+    const scopeSlug = exportScope ? exportScope.toLowerCase().replace(/\s+/g, '-') : 'all'
+    downloadCsv(toCsv([header, ...data]), `followups-${scopeSlug}.csv`)
+  }
 
   const tierCounts = TIERS.map((tier) => ({
     tier,
@@ -454,6 +520,61 @@ export default function Followups() {
         })}
       </div>
 
+      <div className="followups__toolbar">
+        <div className="followups__contactees">
+          <span className="followups__toolbar-label">Contactees</span>
+          {contactees.map((name) => (
+            <span key={name} className="potato followups__contactee-chip">
+              {name}
+              <button
+                type="button"
+                className="followups__chip-x"
+                onClick={() => removeContactee(name)}
+                aria-label={`Remove contactee ${name}`}
+              >
+                ×
+              </button>
+            </span>
+          ))}
+          <form className="followups__add-contactee" onSubmit={addContactee}>
+            <input
+              className="followups__input"
+              type="text"
+              placeholder="Add contactee…"
+              value={newContactee}
+              onChange={(e) => setNewContactee(e.target.value)}
+            />
+            <button type="submit" className="button button--subtle button--small">
+              Add
+            </button>
+          </form>
+        </div>
+
+        <div className="followups__export">
+          <span className="followups__toolbar-label">Export</span>
+          <select
+            className="followups__input followups__status"
+            value={exportScope}
+            onChange={(e) => setExportScope(e.target.value)}
+          >
+            <option value="">Everyone</option>
+            {contactees.map((name) => (
+              <option key={name} value={name}>
+                {name}
+              </option>
+            ))}
+          </select>
+          <button
+            type="button"
+            className="button button--subtle button--small"
+            onClick={exportFollowUps}
+            title="Excludes Resolved and Invalid rows"
+          >
+            Export CSV
+          </button>
+        </div>
+      </div>
+
       {rows.length === 0 && !loading ? (
         <p className="admin__empty">No completed surveys yet.</p>
       ) : visible.length === 0 ? (
@@ -539,14 +660,26 @@ export default function Followups() {
                       </select>
                     </td>
                     <td>
-                      <input
-                        className="followups__input"
-                        type="text"
-                        placeholder="Who's on it?"
+                      <select
+                        className="followups__input followups__status"
                         value={edit.contactee}
-                        onChange={(e) => setField(response.id, 'contactee', e.target.value)}
-                        onBlur={() => saveIfChanged(response)}
-                      />
+                        onChange={(e) => {
+                          const contactee = e.target.value
+                          setField(response.id, 'contactee', contactee)
+                          save(response.id, { ...edit, contactee })
+                        }}
+                      >
+                        <option value="">—</option>
+                        {/* Keep a legacy value visible even if it was removed from the list. */}
+                        {(edit.contactee && !contactees.includes(edit.contactee)
+                          ? [edit.contactee, ...contactees]
+                          : contactees
+                        ).map((name) => (
+                          <option key={name} value={name}>
+                            {name}
+                          </option>
+                        ))}
+                      </select>
                     </td>
                     <td>
                       <textarea

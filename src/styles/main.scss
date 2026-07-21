@@ -2123,3 +2123,64 @@ $fu-head1: 34px; // height of the first (group) header row
 .wheel__live--winner {
   color: $color-accent;
 }
+
+// Followups toolbar: contactee management + CSV export
+.followups__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 24px;
+  margin-bottom: 1rem;
+}
+
+.followups__contactees,
+.followups__export {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.followups__toolbar-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: $color-muted;
+}
+
+.followups__contactee-chip {
+  gap: 4px;
+  padding-right: 6px;
+}
+
+.followups__chip-x {
+  background: none;
+  border: none;
+  color: $color-muted;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 3px;
+
+  &:hover {
+    color: $color-accent;
+  }
+}
+
+.followups__add-contactee {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  .followups__input {
+    width: 150px;
+    min-width: 0;
+  }
+}
+
+.followups__export .followups__status {
+  width: auto;
+  min-width: 130px;
+}
