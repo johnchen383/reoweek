@@ -171,6 +171,7 @@ export default function Followups() {
   })
   const [contactees, setContactees] = useState<string[]>([])
   const [newContactee, setNewContactee] = useState('')
+  const [contacteeFilter, setContacteeFilter] = useState<string | null>(null)
   const [exportScope, setExportScope] = useState('')
   // The previous sorted order — each new sort starts from it, so ties keep
   // their arrangement from earlier sorts (multi-level sorting by clicking).
@@ -251,17 +252,6 @@ export default function Followups() {
       setNewContactee('')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to add contactee')
-    }
-  }
-
-  async function removeContactee(name: string) {
-    setError(null)
-    try {
-      await api.deleteContactee(name, password)
-      setContactees((prev) => prev.filter((c) => c !== name))
-      if (exportScope === name) setExportScope('')
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to remove contactee')
     }
   }
 
@@ -430,16 +420,20 @@ export default function Followups() {
   const matchesTier = (r: Row) => !tierFilter || r.tier === tierFilter
   const matchesStatus = (r: Row) =>
     statusFilters.size === 0 || statusFilters.has(statusFor(r.response))
+  const matchesContactee = (r: Row) =>
+    !contacteeFilter || contacteeFor(r.response) === contacteeFilter
 
   // Faceted counts: each chip row reflects the OTHER active filter, so
   // selecting a potato updates the status counts and vice versa.
   const tierCounts = TIERS.map((tier) => ({
     tier,
-    count: rows.filter((r) => r.tier === tier && matchesStatus(r)).length,
+    count: rows.filter((r) => r.tier === tier && matchesStatus(r) && matchesContactee(r)).length,
   }))
   const statusCounts = FOLLOW_UP_STATUSES.map((status) => ({
     status,
-    count: rows.filter((r) => statusFor(r.response) === status && matchesTier(r)).length,
+    count: rows.filter(
+      (r) => statusFor(r.response) === status && matchesTier(r) && matchesContactee(r),
+    ).length,
   }))
   // Actionable rows nobody has picked up yet (within the current potato filter).
   const unassignedCount = rows.filter(
@@ -449,7 +443,7 @@ export default function Followups() {
       statusFor(r.response) !== 'Resolved' &&
       statusFor(r.response) !== 'Invalid',
   ).length
-  const visible = rows.filter((r) => matchesTier(r) && matchesStatus(r))
+  const visible = rows.filter((r) => matchesTier(r) && matchesStatus(r) && matchesContactee(r))
 
   return (
     <div className="admin followups">
@@ -508,7 +502,7 @@ export default function Followups() {
           onClick={() => setTierFilter(null)}
           title="Everyone with a completed survey"
         >
-          All · {rows.filter(matchesStatus).length}
+          All · {rows.filter((r) => matchesStatus(r) && matchesContactee(r)).length}
         </button>
         {tierCounts
           .filter(({ tier, count }) => count > 0 || tier === tierFilter)
@@ -533,7 +527,7 @@ export default function Followups() {
           onClick={() => setStatusFilters(new Set())}
           title="Show every status"
         >
-          All statuses · {rows.filter(matchesTier).length}
+          All statuses · {rows.filter((r) => matchesTier(r) && matchesContactee(r)).length}
         </button>
         {statusCounts.map(({ status, count }) => {
           const selected = statusFilters.has(status)
@@ -565,24 +559,31 @@ export default function Followups() {
       <div className="followups__toolbar">
         <div className="followups__contactees">
           <span className="followups__toolbar-label">Contactees</span>
+          <button
+            type="button"
+            className={`potato potato--filter${contacteeFilter === null ? ' potato--active' : ''}`}
+            onClick={() => setContacteeFilter(null)}
+            title="Show rows for every contactee, assigned or not"
+          >
+            All · {rows.filter((r) => matchesTier(r) && matchesStatus(r)).length}
+          </button>
           {contactees.map((name) => {
-            // Faceted like the chips above: respects the active potato and
-            // status filters (the contactee chips aren't filters themselves).
+            // Faceted: counts respect the potato and status filters but
+            // ignore the contactee filter itself.
             const assigned = rows.filter(
               (r) => contacteeFor(r.response) === name && matchesTier(r) && matchesStatus(r),
             ).length
+            const selected = contacteeFilter === name
             return (
-              <span key={name} className="potato followups__contactee-chip">
+              <button
+                key={name}
+                type="button"
+                className={`potato potato--filter${selected ? ' potato--active' : ''}`}
+                onClick={() => setContacteeFilter(selected ? null : name)}
+                title={`Filter to rows assigned to ${name}`}
+              >
                 {name} · {assigned}
-                <button
-                  type="button"
-                  className="followups__chip-x"
-                  onClick={() => removeContactee(name)}
-                  aria-label={`Remove contactee ${name}`}
-                >
-                  ×
-                </button>
-              </span>
+              </button>
             )
           })}
           <form className="followups__add-contactee" onSubmit={addContactee}>
