@@ -7,8 +7,6 @@ import tierRules from './data/followups.json'
 import { FOLLOW_UP_STATUSES } from './types'
 import type { FollowUp, FollowUpStatus, GameResponse } from './types'
 
-// Shared with /admin so unlocking one page unlocks both.
-const PASSWORD_STORAGE_KEY = 'wib-admin-password'
 
 const TIERS = ['hot', 'warm', 'cold', 'stale'] as const
 type Tier = (typeof TIERS)[number]
@@ -199,11 +197,9 @@ export default function Followups() {
       setEdits(Object.fromEntries(data.map((r) => [r.id, r.followUp])))
       setContactees(contacteeNames)
       setAuthed(true)
-      sessionStorage.setItem(PASSWORD_STORAGE_KEY, pw)
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
         setAuthed(false)
-        sessionStorage.removeItem(PASSWORD_STORAGE_KEY)
         setError('Incorrect password')
       } else {
         setError(err instanceof Error ? err.message : 'Failed to load responses')
@@ -212,14 +208,6 @@ export default function Followups() {
       setLoading(false)
     }
   }, [])
-
-  useEffect(() => {
-    const stored = sessionStorage.getItem(PASSWORD_STORAGE_KEY)
-    if (stored) {
-      setPassword(stored)
-      load(stored)
-    }
-  }, [load])
 
   function handleUnlock(e: FormEvent) {
     e.preventDefault()
@@ -286,8 +274,23 @@ export default function Followups() {
     }
   }
 
+  // Contactees sign in with their own name (lowercase) instead of the admin
+  // password. Their board is scoped to rows assigned to them, read-only on
+  // assignment, with no export or contactee management.
+  const viewerContactee = useMemo(() => {
+    // Same rule as the server: name with spaces dropped, lowercased.
+    const squash = (s: string) => s.replace(/\s+/g, '').toLowerCase()
+    const wanted = squash(password)
+    return (wanted && contactees.find((c) => squash(c) === wanted)) || null
+  }, [contactees, password])
+
   const rows = useMemo(() => {
-    const surveyed = responses.filter((r) => r.survey.length > 0)
+    const surveyed = responses.filter(
+      (r) =>
+        r.survey.length > 0 &&
+        (!viewerContactee ||
+          (edits[r.id]?.contactee ?? r.followUp.contactee) === viewerContactee),
+    )
     // Seed from the previous sorted order; sort() is stable, so rows the
     // current key considers equal keep that order instead of resetting.
     const pos = new Map(orderRef.current.map((id, i) => [id, i]))
@@ -336,7 +339,7 @@ export default function Followups() {
     })
     orderRef.current = withTier.map((r) => r.response.id)
     return withTier
-  }, [responses, edits, sort])
+  }, [responses, edits, sort, viewerContactee])
 
   function toggleSort(key: SortKey) {
     setSort((prev) => (prev.key === key ? { key, dir: prev.dir === 1 ? -1 : 1 } : { key, dir: 1 }))
@@ -441,7 +444,9 @@ export default function Followups() {
       ) : (
         <header className="admin__header">
           <div>
-            <div className="admin__eyebrow">Follow-ups · Which Is Better?</div>
+            <div className="admin__eyebrow">
+              Follow-ups · {viewerContactee ? `Assigned to ${viewerContactee}` : 'Which Is Better?'}
+            </div>
             <h1 className="admin__title">Potato board</h1>
           </div>
           <div className="admin__header-actions">
@@ -520,6 +525,7 @@ export default function Followups() {
         })}
       </div>
 
+      {!viewerContactee && (
       <div className="followups__toolbar">
         <div className="followups__contactees">
           <span className="followups__toolbar-label">Contactees</span>
@@ -574,6 +580,7 @@ export default function Followups() {
           </button>
         </div>
       </div>
+      )}
 
       {rows.length === 0 && !loading ? (
         <p className="admin__empty">No completed surveys yet.</p>
@@ -589,7 +596,7 @@ export default function Followups() {
                 <SortHeader label="Potato" sortKey="potato" />
                 <th rowSpan={2}>Details</th>
                 <SortHeader label="Status" sortKey="status" />
-                <SortHeader label="Contactee" sortKey="contactee" />
+                {!viewerContactee && <SortHeader label="Contactee" sortKey="contactee" />}
                 <th rowSpan={2} className="followups__notes-head">
                   Notes
                 </th>
@@ -659,28 +666,30 @@ export default function Followups() {
                         ))}
                       </select>
                     </td>
-                    <td>
-                      <select
-                        className="followups__input followups__status"
-                        value={edit.contactee}
-                        onChange={(e) => {
-                          const contactee = e.target.value
-                          setField(response.id, 'contactee', contactee)
-                          save(response.id, { ...edit, contactee })
-                        }}
-                      >
-                        <option value="">—</option>
-                        {/* Keep a legacy value visible even if it was removed from the list. */}
-                        {(edit.contactee && !contactees.includes(edit.contactee)
-                          ? [edit.contactee, ...contactees]
-                          : contactees
-                        ).map((name) => (
-                          <option key={name} value={name}>
-                            {name}
-                          </option>
-                        ))}
-                      </select>
-                    </td>
+                    {!viewerContactee && (
+                      <td>
+                        <select
+                          className="followups__input followups__status"
+                          value={edit.contactee}
+                          onChange={(e) => {
+                            const contactee = e.target.value
+                            setField(response.id, 'contactee', contactee)
+                            save(response.id, { ...edit, contactee })
+                          }}
+                        >
+                          <option value="">—</option>
+                          {/* Keep a legacy value visible even if it was removed from the list. */}
+                          {(edit.contactee && !contactees.includes(edit.contactee)
+                            ? [edit.contactee, ...contactees]
+                            : contactees
+                          ).map((name) => (
+                            <option key={name} value={name}>
+                              {name}
+                            </option>
+                          ))}
+                        </select>
+                      </td>
+                    )}
                     <td>
                       <textarea
                         className="followups__input followups__notes"

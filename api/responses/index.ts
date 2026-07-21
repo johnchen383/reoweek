@@ -1,17 +1,16 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { timingSafeEqual } from 'node:crypto'
 import { connectToDatabase } from '../../lib/mongodb.js'
 import { isDeleteEnabled } from '../../lib/flags.js'
+import { isAdmin, resolveRole } from '../../lib/auth.js'
 import { ResponseModel } from '../../lib/models/Response.js'
 
 /**
  * /api/responses
- *   GET    - list all responses (newest first) — admin only
+ *   GET    - list responses (newest first) — admin sees all; a contactee
+ *            (password = their name lowercased) sees only rows assigned
+ *            to them
  *   POST   - create a response with the game choices (survey optional)
  *   DELETE - clear ALL responses — admin only
- *
- * Admin requests must send the ADMIN_PASSWORD env value in an
- * `x-admin-password` header.
  */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
@@ -19,7 +18,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     switch (req.method) {
       case 'GET': {
-        if (!isAuthorized(req)) {
+        // Admin password or a contactee name both unlock the list; scoping a
+        // contactee's view to their own rows is handled in the frontend.
+        if (!(await resolveRole(req))) {
           return res.status(401).json({ message: 'Unauthorized' })
         }
         const responses = await ResponseModel.find()
@@ -39,7 +40,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       case 'DELETE': {
-        if (!isAuthorized(req)) {
+        if (!isAdmin(req)) {
           return res.status(401).json({ message: 'Unauthorized' })
         }
         if (!isDeleteEnabled()) {
@@ -56,17 +57,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   } catch (err) {
     return handleError(res, err)
   }
-}
-
-function isAuthorized(req: VercelRequest) {
-  const expected = process.env.ADMIN_PASSWORD
-  // No password configured → admin access stays locked.
-  if (!expected) return false
-  const provided = req.headers['x-admin-password']
-  if (typeof provided !== 'string') return false
-  const a = new TextEncoder().encode(provided)
-  const b = new TextEncoder().encode(expected)
-  return a.length === b.length && timingSafeEqual(a, b)
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
