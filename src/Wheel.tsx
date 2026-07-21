@@ -20,9 +20,11 @@ interface Entrant {
 /**
  * Everyone whose answers opted into the prize draw. Matched on the word
  * "draw" so the option text in questions.json can be reworded freely.
+ * Responses marked Invalid on /followups are excluded.
  */
 function entrantsFrom(responses: GameResponse[]): Entrant[] {
   return responses
+    .filter((r) => r.followUp.status !== 'Invalid')
     .filter((r) =>
       r.survey.some((a) => {
         const values = Array.isArray(a.answer) ? a.answer : [String(a.answer)]
