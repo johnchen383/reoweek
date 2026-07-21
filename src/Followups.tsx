@@ -146,8 +146,11 @@ export default function Followups() {
   const [error, setError] = useState<string | null>(null)
   const [sort, setSort] = useState<SortState>({ key: 'potato', dir: 1 })
   const [tierFilter, setTierFilter] = useState<Tier | null>(null)
-  // Empty set = no status filtering (all statuses shown).
-  const [statusFilters, setStatusFilters] = useState<Set<FollowUpStatus>>(new Set())
+  // Empty set = no status filtering (all statuses shown). Defaults to
+  // everything except Invalid, so junk rows stay out of the way until asked for.
+  const [statusFilters, setStatusFilters] = useState<Set<FollowUpStatus>>(
+    () => new Set(FOLLOW_UP_STATUSES.filter((s) => s !== 'Invalid')),
+  )
 
   function toggleStatusFilter(status: FollowUpStatus) {
     setStatusFilters((prev) => {
