@@ -55,9 +55,11 @@ export interface AppConfig {
 export const FOLLOW_UP_STATUSES = [
   "Not Contacted",
   "Contacted",
-  "Followed up",
+  "Keen for church",
+  "Keen for quiz night",
+  "Keen for other",
   "Resolved",
-  "Bestie"
+  "Invalid",
 ] as const;
 
 export type FollowUpStatus = (typeof FOLLOW_UP_STATUSES)[number];

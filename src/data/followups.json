@@ -1,6 +1,6 @@
 {
   "_comment": "Potato tiers for /followups. A person lands in the hottest tier any of their survey answers matches; no match means stale. Keep these strings in sync with the option wordings in questions.json — /followups shows a warning when a rule matches no current option.",
   "hot": ["I'm looking for a church to call home", "Coming along to Unichurch"],
-  "warm": ["I'm curious to learn more", "Exploring more about faith"],
+  "warm": ["Exploring more about faith"],
   "cold": ["Social events + making new friends"]
 }

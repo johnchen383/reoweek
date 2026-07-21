@@ -136,7 +136,18 @@ export default function Followups() {
   const [error, setError] = useState<string | null>(null)
   const [sort, setSort] = useState<SortState>({ key: 'potato', dir: 1 })
   const [tierFilter, setTierFilter] = useState<Tier | null>(null)
-  const [statusFilter, setStatusFilter] = useState<FollowUpStatus | null>(null)
+  // Empty set = no status filtering (all statuses shown).
+  const [statusFilters, setStatusFilters] = useState<Set<FollowUpStatus>>(new Set())
+
+  function toggleStatusFilter(status: FollowUpStatus) {
+    setStatusFilters((prev) => {
+      const next = new Set(prev)
+      if (next.has(status)) next.delete(status)
+      else next.add(status)
+      // Selecting every status is the same as no filter.
+      return next.size === FOLLOW_UP_STATUSES.length ? new Set() : next
+    })
+  }
   const [compact, setCompact] = useState(() => {
     try {
       return localStorage.getItem('wib-followups-compact') === 'true'
@@ -342,7 +353,7 @@ export default function Followups() {
   const visible = rows.filter(
     (r) =>
       (!tierFilter || r.tier === tierFilter) &&
-      (!statusFilter || statusFor(r.response) === statusFilter),
+      (statusFilters.size === 0 || statusFilters.has(statusFor(r.response))),
   )
 
   return (
@@ -419,21 +430,28 @@ export default function Followups() {
       <div className="followups__legend">
         <button
           type="button"
-          className={`potato potato--filter${statusFilter === null ? ' potato--active' : ''}`}
-          onClick={() => setStatusFilter(null)}
+          className={`potato potato--filter${statusFilters.size === 0 ? ' potato--active' : ''}`}
+          onClick={() => setStatusFilters(new Set())}
+          title="Show every status"
         >
           All statuses · {rows.length}
         </button>
-        {statusCounts.map(({ status, count }) => (
-          <button
-            key={status}
-            type="button"
-            className={`potato potato--filter${statusFilter === status ? ' potato--active' : ''}`}
-            onClick={() => setStatusFilter(statusFilter === status ? null : status)}
-          >
-            {status} · {count}
-          </button>
-        ))}
+        {statusCounts.map(({ status, count }) => {
+          const selected = statusFilters.has(status)
+          return (
+            <button
+              key={status}
+              type="button"
+              className={`potato potato--filter${selected ? ' potato--active' : ''}`}
+              onClick={() => toggleStatusFilter(status)}
+              aria-pressed={selected}
+              title="Click to toggle — combine several statuses"
+            >
+              {selected ? '✓ ' : ''}
+              {status} · {count}
+            </button>
+          )
+        })}
       </div>
 
       {rows.length === 0 && !loading ? (
