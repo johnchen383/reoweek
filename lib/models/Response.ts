@@ -21,9 +21,9 @@ const surveyAnswerSchema = new Schema(
 export const FOLLOW_UP_STATUSES = [
   'Not Contacted',
   'Contacted',
-  'Keen for church',
-  'Keen for quiz night',
-  'Keen for other',
+  'Church',
+  'Quiz Night',
+  'Other',
   'Resolved',
   'Invalid',
 ] as const
