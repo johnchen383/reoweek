@@ -1813,11 +1813,9 @@ body {
 
 // ---- Frozen header + frozen left columns on the follow-ups table ----
 // The wrapper scrolls both axes; the two header rows stick to its top and
-// the Completed / Name / Potato columns stick to its left edge.
+// the Completed / Name columns stick to its left edge. Widths are custom
+// properties so the phone breakpoint can shrink them (sticky offsets follow).
 
-$fu-col1: 112px; // Completed
-$fu-col2: 148px; // Name
-$fu-col3: 100px; // Potato
 $fu-head1: 34px; // height of the first (group) header row
 
 .followups .admin__table-wrap {
@@ -1826,6 +1824,9 @@ $fu-head1: 34px; // height of the first (group) header row
 }
 
 .followups__table {
+  --fu-col1: 112px; // Completed
+  --fu-col2: 148px; // Name
+
   border-collapse: separate; // border-collapse breaks sticky rendering in Chrome
   border-spacing: 0;
 
@@ -1847,22 +1848,18 @@ $fu-head1: 34px; // height of the first (group) header row
     background: $color-bg;
   }
 
-  // First three columns freeze horizontally. In the header they're the
-  // rowSpan-2 cells of the first row; in the body, the first three tds.
-  thead tr:first-child th:nth-child(-n + 3) {
+  // First two columns freeze horizontally. In the header they're the
+  // rowSpan-2 cells of the first row; in the body, the first two tds.
+  thead tr:first-child th:nth-child(-n + 2) {
     z-index: 4;
     left: 0;
   }
 
   thead tr:first-child th:nth-child(2) {
-    left: $fu-col1;
+    left: var(--fu-col1);
   }
 
-  thead tr:first-child th:nth-child(3) {
-    left: $fu-col1 + $fu-col2;
-  }
-
-  tbody td:nth-child(-n + 3) {
+  tbody td:nth-child(-n + 2) {
     position: sticky;
     z-index: 1;
     background: $color-bg;
@@ -1873,41 +1870,93 @@ $fu-head1: 34px; // height of the first (group) header row
   }
 
   tbody td:nth-child(2) {
-    left: $fu-col1;
-  }
-
-  tbody td:nth-child(3) {
-    left: $fu-col1 + $fu-col2;
+    left: var(--fu-col1);
   }
 
   // Pin the widths so the sticky offsets stay true.
   th:nth-child(1),
   tbody td:nth-child(1) {
-    width: $fu-col1;
-    min-width: $fu-col1;
-    max-width: $fu-col1;
+    width: var(--fu-col1);
+    min-width: var(--fu-col1);
+    max-width: var(--fu-col1);
   }
 
   thead tr:first-child th:nth-child(2),
   tbody td:nth-child(2) {
-    width: $fu-col2;
-    min-width: $fu-col2;
-    max-width: $fu-col2;
+    width: var(--fu-col2);
+    min-width: var(--fu-col2);
+    max-width: var(--fu-col2);
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
-  thead tr:first-child th:nth-child(3),
-  tbody td:nth-child(3) {
-    width: $fu-col3;
-    min-width: $fu-col3;
-    max-width: $fu-col3;
+  // A subtle edge marking where the frozen region ends.
+  thead tr:first-child th:nth-child(2),
+  tbody td:nth-child(2) {
+    border-right: 1.5px solid $color-border;
+  }
+}
+
+// Phones: shrink the frozen columns and tighten everything so the scrollable
+// region gets as much width as possible.
+@media (max-width: 640px) {
+  .followups {
+    padding-left: 0.6rem;
+    padding-right: 0.6rem;
   }
 
-  // A subtle edge marking where the frozen region ends.
-  thead tr:first-child th:nth-child(3),
-  tbody td:nth-child(3) {
-    border-right: 1.5px solid $color-border;
+  .followups__table {
+    --fu-col1: 62px;
+    --fu-col2: 104px;
+
+    font-size: 12px;
+
+    td {
+      padding-right: 10px;
+      min-width: 70px;
+    }
+  }
+
+  // Let the timestamp wrap onto two short lines inside the narrow column.
+  .followups__table .admin__table-when {
+    white-space: normal;
+    font-size: 10px;
+    line-height: 1.35;
+  }
+
+  .followups__name {
+    white-space: normal;
+    font-size: 12px;
+    line-height: 1.3;
+  }
+
+  .followups__details {
+    min-width: 116px;
+    font-size: 11px;
+  }
+
+  .followups__input {
+    font-size: 12px;
+    padding: 5px 6px;
+    min-width: 90px;
+  }
+
+  .followups__status {
+    padding-right: 22px;
+  }
+
+  .followups__notes {
+    min-width: 150px;
+  }
+
+  .followups__notes-head {
+    min-width: 150px;
+  }
+
+  .followups__table th.followups__opt-head {
+    min-width: 58px;
+    max-width: 84px;
+    font-size: 8.5px;
   }
 }
 
